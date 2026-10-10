@@ -3,7 +3,6 @@
 export const PROJECT_TYPES = [
   "Nursing Home or SNF Remodel",
   "Assisted Living Facility",
-  "Memory Care Unit",
   "ADA Bathroom Upgrades",
   "Nurses Station or Clinical Space",
   "Dining and Common Area",

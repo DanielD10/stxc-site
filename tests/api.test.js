@@ -49,8 +49,8 @@ function goodBody(over = {}) {
     lastName: "O'Brien",
     email: "john@facility.com",
     phone: "(210) 555-1234",
-    projectType: "Memory Care Unit",
-    message: "We need our 40-bed memory care wing renovated before the March survey.",
+    projectType: "Nursing Home or SNF Remodel",
+    message: "We need our 40-bed east wing renovated before the March survey.",
     website: "",
     elapsedMs: 30000,
     ...over,
@@ -248,10 +248,10 @@ test("valid inquiry → 200 and the right email goes to Resend", async () => {
   assert.deepEqual(c.body.to, ["owner@stxc.test"]);
   assert.equal(c.body.reply_to, "john@facility.com");
   assert.equal(c.body.from, "STXC Website <onboarding@resend.dev>");
-  assert.match(c.body.subject, /Memory Care Unit from John O'Brien/);
+  assert.match(c.body.subject, /Nursing Home or SNF Remodel from John O'Brien/);
   assert.match(c.body.text, /O'Brien/); // apostrophes survive
   assert.match(c.body.html, /O&#39;Brien/); // and are escaped in HTML
-  assert.match(c.body.text, /40-bed memory care wing/);
+  assert.match(c.body.text, /40-bed east wing/);
 });
 
 test("HTML/script in message is escaped, never rendered", async () => {
@@ -429,7 +429,7 @@ test("valid lead → Telegram + ntfy alerts with name, project, tap-to-call", as
   assert.equal(tg.url, "https://api.telegram.org/bot123:ABC/sendMessage");
   assert.equal(tg.body.chat_id, "987654");
   assert.match(tg.body.text, /John O'Brien/);
-  assert.match(tg.body.text, /Memory Care Unit/);
+  assert.match(tg.body.text, /Nursing Home or SNF Remodel/);
   assert.match(tg.body.text, /\(210\) 555-1234/);
   assert.equal(nt.url, "https://ntfy.sh/");
   assert.equal(nt.body.topic, "stxc-leads-test-topic");

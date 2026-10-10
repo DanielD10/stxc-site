@@ -44,9 +44,9 @@ export const SERVICES = [
   { title: "Resident Room Renovations", tag: "Most Requested", desc: "Flooring, walls, windows, lighting, and accessibility upgrades done in phases, so residents stay in place." },
   { title: "ADA Bathroom Upgrades", tag: "Code Critical", desc: "Roll-in showers, grab bars, comfort-height fixtures, and slip-resistant floors built to ADA and Texas HHSC standards." },
   { title: "Dining and Common Areas", tag: null, desc: "Dining rooms and activity spaces rebuilt with new drywall, lighting, and finishes." },
-  { title: "Commercial Build-Outs", tag: null, desc: "Offices, retail, medical clinics, and restaurants — tenant improvements and new commercial construction." },
+  { title: "Commercial Build-Outs", tag: null, desc: "Offices, retail, medical clinics, and restaurants — tenant improvements and finish-outs." },
   { title: "Nurses Stations and Clinical Spaces", tag: "Specialized", desc: "Nursing stations, medication rooms, and clinical support spaces built for staff workflow and patient safety." },
-  { title: "Memory Care and Specialty Units", tag: "Specialized", desc: "Calming finishes, wayfinding, and secured egress for dementia and memory care." },
+  { title: "New Commercial Construction", tag: null, desc: "Ground-up commercial buildings — site work, concrete, framing, and finish-out." },
 ];
 
 export const ROOF_SERVICES = [
@@ -58,7 +58,7 @@ export const ROOF_SERVICES = [
 
 export const ABOUT = {
   heading: "Built for the Places People Live and Heal.",
-  body: "Nursing homes, assisted living, and memory care can't shut down for a remodel. We plan around residents and staff, seal off work areas, and keep the building running while we build.",
+  body: "Nursing homes and assisted living facilities can't shut down for a remodel. We plan around residents and staff, seal off work areas, and keep the building running while we build.",
   bullets: [
     "Phased scheduling — residents stay in place",
     "Work areas sealed and furnishings protected",

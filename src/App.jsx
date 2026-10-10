@@ -573,7 +573,7 @@ function Field({ id, label, type = "text", auto, ph, optional, form, errors, cha
 function Footer() {
   const yr = new Date().getFullYear();
   const cols = {
-    Healthcare: [["Nursing Home Remodels", "services"], ["ADA Upgrades", "services"], ["Memory Care", "services"], ["Clinical Spaces", "services"]],
+    Healthcare: [["Nursing Home Remodels", "services"], ["ADA Upgrades", "services"], ["Clinical Spaces", "services"], ["New Construction", "services"]],
     Roofing: [["Commercial Re-Roofing", "roofing"], ["Healthcare Roofing", "roofing"], ["Storm and Emergency", "roofing"], ["Residential Roofing", "roofing"]],
     Company: [["Our Work", "work"], ["About", "about"], ["FAQ", "faq"], ["Contact", "contact"]],
   };
