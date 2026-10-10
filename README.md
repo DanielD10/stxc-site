@@ -1,4 +1,4 @@
-# STXC By Design — website
+# South Texas Construction By Design — website
 
 Contractor site with a contact form that emails the business and alerts his phone. React + Vite front end, Cloudflare Worker backend (Vercel-compatible), email through Resend.
 
@@ -11,7 +11,7 @@ Contractor site with a contact form that emails the business and alerts his phon
 | `npm install` | Install (once, and after pulling new code) |
 | `npm run dev` | Run locally at http://localhost:5173 (form works in dry-run mode) |
 | `npm run check` | List anything on the site that's still placeholder |
-| `npm test` | Run the 49 backend, alert, Cloudflare, and contract tests |
+| `npm test` | Run the 51 backend, alert, Cloudflare, and contract tests |
 | `npm run cf:dev` | Run inside Cloudflare's runtime locally |
 | `npm run test-alert` | Send a test lead alert to his phone (uses `.env.local`) |
 | `npm run telegram-id` | Find his Telegram chat ID after he taps Start on the bot |

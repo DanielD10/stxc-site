@@ -49,7 +49,7 @@ function goodBody(over = {}) {
     lastName: "O'Brien",
     email: "john@facility.com",
     phone: "(210) 555-1234",
-    projectType: "Nursing Home or SNF Remodel",
+    projectType: "Nursing Home or Skilled Nursing Facility Remodel",
     message: "We need our 40-bed east wing renovated before the March survey.",
     website: "",
     elapsedMs: 30000,
@@ -131,16 +131,16 @@ test("POST with no Origin header (scripts/curl) → 403", async () => {
 });
 
 test("ALLOWED_ORIGINS adds extra sites", async () => {
-  process.env.ALLOWED_ORIGINS = "https://stxcbydesign.com";
+  process.env.ALLOWED_ORIGINS = "https://southtxbydesign.com";
   const r = res();
-  await contact(req({ origin: "https://stxcbydesign.com", body: goodBody() }), r);
+  await contact(req({ origin: "https://southtxbydesign.com", body: goodBody() }), r);
   assert.equal(r.statusCode, 200);
 });
 
 test("custom domain works with no config (same-host rule)", async () => {
   const r = res();
-  const q = req({ origin: "https://www.stxcbydesign.com", body: goodBody() });
-  q.headers.host = "www.stxcbydesign.com";
+  const q = req({ origin: "https://www.southtxbydesign.com", body: goodBody() });
+  q.headers.host = "www.southtxbydesign.com";
   await contact(q, r);
   assert.equal(r.statusCode, 200);
 });
@@ -247,8 +247,8 @@ test("valid inquiry → 200 and the right email goes to Resend", async () => {
   assert.ok(c.opts.headers["Idempotency-Key"].startsWith("inquiry-"));
   assert.deepEqual(c.body.to, ["owner@stxc.test"]);
   assert.equal(c.body.reply_to, "john@facility.com");
-  assert.equal(c.body.from, "STXC Website <onboarding@resend.dev>");
-  assert.match(c.body.subject, /Nursing Home or SNF Remodel from John O'Brien/);
+  assert.equal(c.body.from, "South Texas Construction By Design <onboarding@resend.dev>");
+  assert.match(c.body.subject, /Nursing Home or Skilled Nursing Facility Remodel from John O'Brien/);
   assert.match(c.body.text, /O'Brien/); // apostrophes survive
   assert.match(c.body.html, /O&#39;Brien/); // and are escaped in HTML
   assert.match(c.body.text, /40-bed east wing/);
@@ -332,7 +332,7 @@ test("confirmation receipt only goes out with a verified sender", async () => {
   await contact(req({ body: goodBody() }), r);
   assert.equal(calls.length, 1); // test sender → no receipt
   _resetDuplicates();
-  process.env.FROM_EMAIL = "STXC <website@stxcbydesign.com>";
+  process.env.FROM_EMAIL = "South Texas Construction By Design <website@southtxbydesign.com>";
   mockResend([{ status: 200, json: { id: "a" } }]);
   r = res();
   await contact(req({ body: goodBody() }), r);
@@ -383,7 +383,7 @@ test("/api/health names missing settings", async () => {
 /* ── Frontend ↔ backend contract ── */
 
 test("what the website sends is exactly what the server accepts", async () => {
-  const form = { ...EMPTY_FORM, firstName: " Maria ", lastName: "De La Cruz", email: "maria@alf.org", phone: "", projectType: PROJECT_TYPES[0], message: "Two bathrooms need ADA upgrades. We're on a tight timeline." };
+  const form = { ...EMPTY_FORM, firstName: " Maria ", lastName: "De La Cruz", email: "maria@alf.org", phone: "", projectType: PROJECT_TYPES[0], message: "Two bathrooms need accessibility upgrades. We're on a tight timeline." };
   assert.deepEqual(validateForm(form), {});
   const payload = buildPayload(form, 12000);
   assert.deepEqual(Object.keys(payload).sort(), ["elapsedMs", "email", "firstName", "lastName", "message", "phone", "projectType", "website"]);
@@ -429,7 +429,7 @@ test("valid lead → Telegram + ntfy alerts with name, project, tap-to-call", as
   assert.equal(tg.url, "https://api.telegram.org/bot123:ABC/sendMessage");
   assert.equal(tg.body.chat_id, "987654");
   assert.match(tg.body.text, /John O'Brien/);
-  assert.match(tg.body.text, /Nursing Home or SNF Remodel/);
+  assert.match(tg.body.text, /Nursing Home or Skilled Nursing Facility Remodel/);
   assert.match(tg.body.text, /\(210\) 555-1234/);
   assert.equal(nt.url, "https://ntfy.sh/");
   assert.equal(nt.body.topic, "stxc-leads-test-topic");
@@ -484,4 +484,21 @@ test("/api/health shows which phone alerts are on", async () => {
   assert.equal(r.body.phoneAlerts, "telegram + ntfy");
   assert.ok(!JSON.stringify(r.body).includes("123:ABC"));
   assert.ok(!JSON.stringify(r.body).includes("stxc-leads-test-topic"));
+});
+
+test("receipt wording: 'Other' reads naturally, real types are named", async () => {
+  const { buildConfirmationEmail } = await import("../api/_lib/email.js");
+  const meta = { company: "South Texas Construction By Design", phone: "(210) 367-6648" };
+  const other = buildConfirmationEmail({ firstName: "Ana", projectType: "Other" }, meta);
+  assert.match(other.text, /about your project\./);
+  assert.doesNotMatch(other.text, /Other project/);
+  const named = buildConfirmationEmail({ firstName: "Ana", projectType: "Office Build-Out" }, meta);
+  assert.match(named.text, /about your Office Build-Out project\./);
+});
+
+test("inquiry email spells out Reference and Central Time", async () => {
+  const { buildInquiryEmail } = await import("../api/_lib/email.js");
+  const m = buildInquiryEmail({ firstName: "Ana", lastName: "Ruiz", email: "ana@example.com", phone: "", projectType: "Other", message: "Need a quote for a small job." }, { id: "abc-123", company: "South Texas Construction By Design" });
+  assert.match(m.text, /\(Central Time\) · Reference abc-123/);
+  assert.doesNotMatch(m.text + m.html, /\bRef\b/);
 });

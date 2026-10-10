@@ -1,10 +1,10 @@
 // One list, used by BOTH the website dropdown and the server validation.
 // Add or rename project types here and both sides stay in sync.
 export const PROJECT_TYPES = [
-  "Nursing Home or SNF Remodel",
+  "Nursing Home or Skilled Nursing Facility Remodel",
   "Assisted Living Facility",
-  "ADA Bathroom Upgrades",
-  "Nurses Station or Clinical Space",
+  "Americans with Disabilities Act Bathroom Upgrades",
+  "Nurse Station or Clinical Space",
   "Dining and Common Area",
   "Office Build-Out",
   "Retail or Restaurant",

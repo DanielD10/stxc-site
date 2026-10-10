@@ -7,7 +7,7 @@ import { EMPTY_FORM, RULES, validateForm, limitField, buildPayload, submitInquir
 const BG = "#080C14", SRF = "#0D1321", RAISED = "#111827", PANEL = "#1A2234";
 const BLUE = "#3B82F6", BLUEHI = "#60A5FA", BLUELO = "rgba(59,130,246,0.10)";
 const AMBER = "#F59E0B", RED = "#EF4444";
-const WHITE = "#F9FAFB", MID = "#9CA3AF", MUTED = "#6B7280", FAINT = "#4B5563";
+const WHITE = "#F9FAFB", MID = "#9CA3AF", MUTED = "#828A98", FAINT = "#828A98";
 const BORDER = "rgba(255,255,255,0.06)", BAC = "rgba(59,130,246,0.28)";
 const NAV_H = 64;
 
@@ -108,13 +108,13 @@ function Toasts({ list }) {
 }
 
 function CallBar() {
-  return <div className="call-bar" style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200, background: "linear-gradient(90deg,#3B82F6,#2563EB)", alignItems: "center", justifyContent: "center", padding: ".95rem 1rem calc(.95rem + env(safe-area-inset-bottom))", gap: ".65rem", boxShadow: "0 -4px 24px rgba(59,130,246,.3)" }}>
+  return <aside aria-label="Call us" className="call-bar" style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200, background: "linear-gradient(90deg,#3B82F6,#2563EB)", alignItems: "center", justifyContent: "center", padding: ".95rem 1rem calc(.95rem + env(safe-area-inset-bottom))", gap: ".65rem", boxShadow: "0 -4px 24px rgba(59,130,246,.3)" }}>
     <a href={telHref} style={{ fontWeight: 700, fontSize: "1rem", color: "#fff" }}>📞 Call Now · {SITE.phone}</a>
-  </div>;
+  </aside>;
 }
 
 /* ── Nav ── */
-const NLINKS = [{ label: "Services", id: "services" }, { label: "Our Work", id: "work" }, { label: "Roofing", id: "roofing" }, { label: "About", id: "about" }, { label: "FAQ", id: "faq" }];
+const NLINKS = [{ label: "Services", id: "services" }, { label: "Our Work", id: "work" }, { label: "Roofing", id: "roofing" }, { label: "About", id: "about" }, { label: "Frequently Asked Questions", id: "faq" }];
 
 function Nav() {
   const sc = useScrolled();
@@ -132,8 +132,8 @@ function Nav() {
   return <nav id="nav" aria-label="Main" style={{ position: "fixed", inset: "0 0 auto 0", zIndex: 100, background: solid ? "rgba(8,12,20,.94)" : "transparent", backdropFilter: solid ? "blur(24px)" : "none", WebkitBackdropFilter: solid ? "blur(24px)" : "none", borderBottom: `1px solid ${solid ? BORDER : "transparent"}`, transition: "all .3s ease" }}>
     <div style={{ width: "min(1200px,94vw)", marginInline: "auto", display: "flex", alignItems: "center", justifyContent: "space-between", padding: sc ? ".8rem 0" : "1.1rem 0", transition: "padding .3s" }}>
       <button onClick={() => nav("hero")} aria-label={SITE.company + " — back to top"} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "left" }}>
-        <div style={{ fontWeight: 900, fontSize: "1.15rem", letterSpacing: "-.04em", color: WHITE, lineHeight: 1 }}><span style={{ color: BLUE }}>STXC</span> BY DESIGN</div>
-        <div style={{ fontSize: ".52rem", letterSpacing: ".22em", color: MUTED, textTransform: "uppercase", marginTop: 3 }}>Healthcare · Commercial · Roofing</div>
+        <div style={{ fontWeight: 900, fontSize: "clamp(.88rem,2.6vw,1.05rem)", letterSpacing: "-.03em", color: WHITE, lineHeight: 1.1 }}><span style={{ color: BLUE }}>SOUTH TEXAS</span> CONSTRUCTION</div>
+        <div style={{ fontSize: ".56rem", fontWeight: 700, letterSpacing: ".22em", color: MUTED, textTransform: "uppercase", marginTop: 4 }}><span style={{ color: WHITE }}>By Design</span> · Healthcare · Commercial · Roofing</div>
       </button>
       <div className="desk" style={{ display: "flex", alignItems: "center", gap: ".1rem" }}>
         {NLINKS.map((l) => <NL key={l.id} label={l.label} onClick={() => nav(l.id)} />)}
@@ -175,7 +175,7 @@ function Hero() {
       <div style={{ opacity: on ? 1 : 0, transform: on ? "none" : "translateY(12px)", transition: tr(0.05), marginBottom: "2rem" }}>
         <span style={{ display: "inline-flex", alignItems: "center", gap: ".5rem", background: BLUELO, border: "1px solid rgba(59,130,246,.22)", borderRadius: 100, padding: ".35rem .9rem .35rem .5rem" }}>
           <span style={{ background: BLUE, borderRadius: "50%", width: 6, height: 6, display: "inline-block" }} />
-          <span style={{ fontSize: ".68rem", fontWeight: 600, letterSpacing: ".12em", textTransform: "uppercase", color: BLUEHI }}>Texas Statewide — Est. {SITE.founded}</span>
+          <span style={{ fontSize: ".68rem", fontWeight: 600, letterSpacing: ".12em", textTransform: "uppercase", color: BLUEHI }}>Texas Statewide — Established {SITE.founded}</span>
         </span>
       </div>
       <h1 style={{ fontWeight: 900, fontSize: "clamp(3rem,9vw,7rem)", lineHeight: 0.94, letterSpacing: "-.04em", marginBottom: "2rem", opacity: on ? 1 : 0, transform: on ? "none" : "translateY(20px)", transition: tr(0.12) }}>
@@ -183,7 +183,7 @@ function Hero() {
         <span style={{ display: "block", background: "linear-gradient(110deg,#3B82F6 0%,#60A5FA 45%,#F59E0B 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Trusted Across Texas.</span>
       </h1>
       <p style={{ fontSize: "clamp(1rem,1.8vw,1.15rem)", color: MID, maxWidth: "50ch", lineHeight: 1.75, marginBottom: "2.75rem", opacity: on ? 1 : 0, transition: tr(0.22) }}>
-        The contractor nursing homes, ALFs, and commercial properties rely on — phased renovations in occupied buildings, plus our own roofing crews, anywhere in Texas.
+        The Contractor nursing homes, assisted living facilities, and commercial properties rely on — phased renovations in occupied buildings, plus our own roofing crews, anywhere in Texas.
       </p>
       <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap", opacity: on ? 1 : 0, transition: tr(0.3) }}>
         <Btn onClick={() => go("contact")} sx={{ padding: ".95rem 2.25rem", fontSize: ".98rem", fontWeight: 700 }}>Request an Estimate</Btn>
@@ -264,7 +264,7 @@ function Work() {
 function GalleryTile({ g, onOpen }) {
   const [hov, setHov] = useState(false);
   return <button type="button" onClick={onOpen} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} aria-label={"View photo: " + g.caption} className="gtile" style={{ border: `1px solid ${hov ? BAC : BORDER}` }}>
-    <img src={photo(g.photo, true)} alt={g.caption} loading="lazy" decoding="async" style={{ transform: hov ? "scale(1.05)" : "scale(1)" }} onError={hideBrokenImg} />
+    <img src={photo(g.photo, true)} alt="" loading="lazy" decoding="async" style={{ transform: hov ? "scale(1.05)" : "scale(1)" }} onError={hideBrokenImg} />
     <span className="gcap">{g.caption}</span>
   </button>;
 }
@@ -479,7 +479,7 @@ function Contact({ addToast }) {
           </div>)}
         </div>
         <div style={{ background: BLUELO, border: "1px solid rgba(59,130,246,.2)", borderLeft: "3px solid #3B82F6", borderRadius: 10, padding: "1.1rem 1.35rem" }}>
-          <p style={{ fontSize: ".88rem", color: MID, lineHeight: 1.75 }}><strong style={{ color: WHITE, fontWeight: 600 }}>Healthcare projects:</strong> We understand HHSC survey timelines. Call us first for pre-survey remediation.</p>
+          <p style={{ fontSize: ".88rem", color: MID, lineHeight: 1.75 }}><strong style={{ color: WHITE, fontWeight: 600 }}>Healthcare projects:</strong> We understand Texas Health and Human Services Commission survey timelines. Call us first for pre-survey remediation.</p>
         </div>
       </Rv>
 
@@ -490,7 +490,7 @@ function Contact({ addToast }) {
           {status === "success" && <div role="status" style={{ textAlign: "center", padding: "3rem 1rem", animation: "scIn .4s ease" }}>
             <div style={{ width: 60, height: 60, borderRadius: "50%", background: BLUELO, border: "1px solid rgba(59,130,246,.3)", display: "flex", alignItems: "center", justifyContent: "center", marginInline: "auto", marginBottom: "1.5rem" }}><Check size={24} /></div>
             <h3 style={{ fontWeight: 800, fontSize: "1.5rem", color: WHITE, marginBottom: ".6rem" }}>Message Sent</h3>
-            <p style={{ color: MID, fontSize: "1rem", lineHeight: 1.75, marginBottom: "2rem" }}>Thanks, {form.firstName}. We'll be in touch within 1 business day. Need us sooner? Call <a href={telHref} style={{ color: BLUEHI }}>{SITE.phone}</a>.</p>
+            <p style={{ color: MID, fontSize: "1rem", lineHeight: 1.75, marginBottom: "2rem" }}>Thanks, {form.firstName}. We'll be in touch within one business day. Need us sooner? Call <a href={telHref} style={{ color: BLUEHI }}>{SITE.phone}</a>.</p>
             <Btn onClick={reset}>Send Another</Btn>
           </div>}
 
@@ -573,15 +573,15 @@ function Field({ id, label, type = "text", auto, ph, optional, form, errors, cha
 function Footer() {
   const yr = new Date().getFullYear();
   const cols = {
-    Healthcare: [["Nursing Home Remodels", "services"], ["ADA Upgrades", "services"], ["Clinical Spaces", "services"], ["New Construction", "services"]],
+    Healthcare: [["Nursing Home Remodels", "services"], ["Americans with Disabilities Act Upgrades", "services"], ["Clinical Spaces", "services"], ["New Construction", "services"]],
     Roofing: [["Commercial Re-Roofing", "roofing"], ["Healthcare Roofing", "roofing"], ["Storm and Emergency", "roofing"], ["Residential Roofing", "roofing"]],
-    Company: [["Our Work", "work"], ["About", "about"], ["FAQ", "faq"], ["Contact", "contact"]],
+    Company: [["Our Work", "work"], ["About", "about"], ["Frequently Asked Questions", "faq"], ["Contact", "contact"]],
   };
   return <footer style={{ background: BG, borderTop: `1px solid ${BORDER}`, padding: "3.5rem 0 6rem" }}>
     <div className="wrap">
       <div className="fg">
         <div>
-          <div style={{ fontWeight: 900, fontSize: "1.15rem", letterSpacing: "-.04em", color: WHITE, marginBottom: ".75rem" }}><span style={{ color: BLUE }}>STXC</span> BY DESIGN</div>
+          <div style={{ fontWeight: 900, fontSize: "1.15rem", letterSpacing: "-.03em", color: WHITE, lineHeight: 1.15, marginBottom: ".75rem" }}><span style={{ color: BLUE }}>SOUTH TEXAS</span> CONSTRUCTION<br />BY DESIGN</div>
           <p style={{ fontSize: ".86rem", color: MID, lineHeight: 1.75, maxWidth: "28ch", marginBottom: "1rem" }}>{SITE.tagline} Healthcare, commercial, and roofing across Texas.</p>
           <p style={{ fontSize: ".86rem", lineHeight: 1.9 }}>
             <a href={telHref} style={{ color: WHITE }}>{SITE.phone}</a><br />
@@ -598,7 +598,7 @@ function Footer() {
       <Divider />
       <div style={{ paddingTop: "1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: ".5rem" }}>
         <p style={{ fontSize: ".76rem", color: MUTED }}>© {yr} {SITE.company}. All rights reserved.</p>
-        <p style={{ fontSize: ".74rem", color: FAINT }}>Est. {SITE.founded}{CREDENTIALS.length ? " · " + CREDENTIALS.join(" · ") : ""}</p>
+        <p style={{ fontSize: ".74rem", color: FAINT }}>Established {SITE.founded}{CREDENTIALS.length ? " · " + CREDENTIALS.join(" · ") : ""}</p>
       </div>
     </div>
   </footer>;

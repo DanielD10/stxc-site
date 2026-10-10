@@ -15,8 +15,8 @@ const sample = {
   lastName: "Customer",
   email: "test@example.com",
   phone: "(210) 555-0123",
-  projectType: "ADA Bathroom Upgrades",
-  message: "This is a test alert from the STXC website setup. If this hit your phone, alerts are working.",
+  projectType: "Americans with Disabilities Act Bathroom Upgrades",
+  message: "This is a test alert from the South Texas Construction By Design website setup. If this hit your phone, alerts are working.",
 };
 
 console.log("\nSending a test alert via: " + cfg.channels.join(" + ") + " …");

@@ -8,9 +8,9 @@ export const SITE = {
   tagline: "Building Dreams. Creating Reality.",
   phone: "(210) 367-6648",
   email: "jrduran75@yahoo.com",      // shown on the site; form inquiries go to TO_EMAIL in Vercel
-  founded: 2005,                     // ← CONFIRM: year founded (drives "Est." and "Years in Texas")
+  founded: 2005,                     // ← CONFIRM: year founded (drives "Established" and "Years in Texas")
   serviceArea: "All of Texas · Based in South Texas",
-  responseNote: "We reply within 1 business day",
+  responseNote: "We reply within one business day",
 };
 
 // Real credentials only. Texas has no state GC license and no state roofing
@@ -42,16 +42,16 @@ export const GALLERY = [
 
 export const SERVICES = [
   { title: "Resident Room Renovations", tag: "Most Requested", desc: "Flooring, walls, windows, lighting, and accessibility upgrades done in phases, so residents stay in place." },
-  { title: "ADA Bathroom Upgrades", tag: "Code Critical", desc: "Roll-in showers, grab bars, comfort-height fixtures, and slip-resistant floors built to ADA and Texas HHSC standards." },
+  { title: "Americans with Disabilities Act Bathroom Upgrades", tag: "Code Critical", desc: "Roll-in showers, grab bars, comfort-height fixtures, and slip-resistant floors built to Americans with Disabilities Act and Texas Health and Human Services Commission standards." },
   { title: "Dining and Common Areas", tag: null, desc: "Dining rooms and activity spaces rebuilt with new drywall, lighting, and finishes." },
   { title: "Commercial Build-Outs", tag: null, desc: "Offices, retail, medical clinics, and restaurants — tenant improvements and finish-outs." },
-  { title: "Nurses Stations and Clinical Spaces", tag: "Specialized", desc: "Nursing stations, medication rooms, and clinical support spaces built for staff workflow and patient safety." },
+  { title: "Nurse Stations and Clinical Spaces", tag: "Specialized", desc: "Nursing stations, medication rooms, and clinical support spaces built for staff workflow and patient safety." },
   { title: "New Commercial Construction", tag: null, desc: "Ground-up commercial buildings — site work, concrete, framing, and finish-out." },
 ];
 
 export const ROOF_SERVICES = [
-  { title: "Commercial Re-Roofing", desc: "TPO, modified bitumen, and metal systems installed to code with permit documentation." },
-  { title: "Healthcare Facility Roofing", desc: "Re-roofs on occupied nursing homes and ALFs, coordinated with interior work." },
+  { title: "Commercial Re-Roofing", desc: "Thermoplastic polyolefin, modified bitumen, and metal systems installed to code with permit documentation." },
+  { title: "Healthcare Facility Roofing", desc: "Re-roofs on occupied nursing homes and assisted living facilities, coordinated with interior work." },
   { title: "Storm Damage and Emergency Repair", desc: "Emergency tarping, insurance documentation, and full restoration after hail or wind." },
   { title: "Historic and Residential Roofing", desc: "Deck repair, shingle, metal, and tile replacement on homes and older buildings." },
 ];

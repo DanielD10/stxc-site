@@ -18,7 +18,7 @@ if (problems.length === 0) console.log("✓ No placeholders or missing photos.")
 for (const p of problems) console.log("✗ " + p);
 console.log("\nConfirm these are true before going public:");
 console.log("  • Email shown on site: " + SITE.email);
-console.log("  • Founded: " + SITE.founded + "  (shows as \"Est. " + SITE.founded + "\" and \"" + (new Date().getFullYear() - SITE.founded) + "+ Years in Texas\")");
+console.log("  • Founded: " + SITE.founded + "  (shows as \"Established " + SITE.founded + "\" and \"" + (new Date().getFullYear() - SITE.founded) + "+ Years in Texas\")");
 console.log("  • Every service and FAQ answer in src/config.js matches what the business actually does");
 console.log("\nEdit everything in src/config.js\n");
 

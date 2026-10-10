@@ -1,4 +1,4 @@
-# STXC Website — Setup Guide
+# South Texas Construction By Design Website — Setup Guide
 
 Hosting: **Cloudflare (free)** · Domain: **southtxbydesign.com** (~$10.46/yr) · Email: **Resend (free)** · Code: **GitHub (private, free)**
 
@@ -18,7 +18,7 @@ stxc-site/
   worker/index.js     ← plugs the backend into Cloudflare
   wrangler.jsonc      ← Cloudflare settings
   public/_headers     ← security headers for every page
-  tests/              ← 49 automatic checks (npm test)
+  tests/              ← 51 automatic checks (npm test)
   vercel.json         ← lets the same code run on Vercel later if you ever move it
 ```
 
@@ -44,7 +44,7 @@ Open **http://localhost:5173**. Send a test inquiry — the email prints in the 
 | Command | What it does |
 |---|---|
 | `npm run check` | Flags anything placeholder or missing |
-| `npm test` | Runs all 49 checks |
+| `npm test` | Runs all 51 checks |
 | `npm run test-alert` | Sends a test lead alert to his phone (uses `.env.local`) |
 | `npm run telegram-id` | Finds his Telegram chat ID |
 | `npm run cf:dev` | Runs the site inside Cloudflare's real runtime locally |
@@ -108,7 +108,7 @@ Then redeploy (Worker → **Deployments**), or just push any change.
 Free email-to-text is gone (AT&T and T-Mobile shut theirs off in 2025, Verizon's ends by March 2027), so this sends a **push notification**: name, project, phone number. It goes out even if the email fails.
 
 ### Option A — Telegram (recommended; iPhone or Android)
-1. Your phone: install **Telegram** → search **@BotFather** → **Start** → send `/newbot` → name it `STXC Leads` → username ending in `bot`. Copy the **token**.
+1. Your phone: install **Telegram** → search **@BotFather** → **Start** → send `/newbot` → name it `South Texas Construction Leads` → username ending in `bot`. Copy the **token**.
 2. **His** phone: install Telegram → open the `t.me/...` link BotFather gave you → tap **Start**.
 3. In the project folder, create `.env.local` with:
    ```

@@ -1,7 +1,7 @@
 import { log } from "./log.js";
 
 const RESEND_URL = "https://api.resend.com/emails";
-const DEFAULT_FROM = "STXC Website <onboarding@resend.dev>";
+const DEFAULT_FROM = "South Texas Construction By Design <onboarding@resend.dev>";
 
 export function escapeHtml(s) {
   return String(s)
@@ -54,7 +54,7 @@ export function buildInquiryEmail(d, meta) {
     "Message:",
     d.message,
     "",
-    "Received " + when + " (Central) · Ref " + meta.id,
+    "Received " + when + " (Central Time) · Reference " + meta.id,
     "Hit Reply to answer them directly.",
   ].join("\n");
 
@@ -85,7 +85,7 @@ export function buildInquiryEmail(d, meta) {
     escapeHtml(d.message).replace(/\n/g, "<br>") +
     "</div></td></tr>" +
     '<tr><td style="padding:20px 28px 26px;font-size:13px;color:#4b5563">Hit <strong>Reply</strong> to answer ' + escapeHtml(d.firstName) + " directly.</td></tr>" +
-    '<tr><td style="background:#f8fafc;padding:12px 28px;font-size:11px;color:#9ca3af">Received ' + escapeHtml(when) + " (Central) · Ref " + escapeHtml(meta.id) + "</td></tr>" +
+    '<tr><td style="background:#f8fafc;padding:12px 28px;font-size:11px;color:#9ca3af">Received ' + escapeHtml(when) + " (Central Time) · Reference " + escapeHtml(meta.id) + "</td></tr>" +
     "</table></td></tr></table></body></html>";
 
   return { subject, text, html };
@@ -96,7 +96,7 @@ export function buildConfirmationEmail(d, meta) {
   const lines = [
     "Hi " + d.firstName + ",",
     "",
-    "Thanks for reaching out about your " + d.projectType + " project. We got your message and we'll get back to you within one business day.",
+    "Thanks for reaching out about your " + (d.projectType === "Other" ? "" : d.projectType + " ") + "project. We got your message and we'll get back to you within one business day.",
     "",
   ];
   if (meta.phone) lines.push("Need us sooner? Call " + meta.phone + ".", "");
