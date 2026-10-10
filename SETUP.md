@@ -18,7 +18,7 @@ stxc-site/
   worker/index.js     ← plugs the backend into Cloudflare
   wrangler.jsonc      ← Cloudflare settings
   public/_headers     ← security headers for every page
-  tests/              ← 51 automatic checks (npm test)
+  tests/              ← 52 automatic checks (npm test)
   vercel.json         ← lets the same code run on Vercel later if you ever move it
 ```
 
@@ -44,7 +44,7 @@ Open **http://localhost:5173**. Send a test inquiry — the email prints in the 
 | Command | What it does |
 |---|---|
 | `npm run check` | Flags anything placeholder or missing |
-| `npm test` | Runs all 51 checks |
+| `npm test` | Runs all 52 checks |
 | `npm run test-alert` | Sends a test lead alert to his phone (uses `.env.local`) |
 | `npm run telegram-id` | Finds his Telegram chat ID |
 | `npm run cf:dev` | Runs the site inside Cloudflare's real runtime locally |

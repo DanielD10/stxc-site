@@ -10,6 +10,7 @@ export const PROJECT_TYPES = [
   "Retail or Restaurant",
   "Medical or Clinic Office",
   "New Commercial Construction",
+  "Project Management",
   "Commercial Re-Roofing",
   "Residential Roofing",
   "Storm Damage or Emergency Repair",

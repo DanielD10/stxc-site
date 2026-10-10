@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { SITE, CREDENTIALS, FOCUS, PHOTOS, GALLERY, SERVICES, ROOF_SERVICES, ABOUT, FAQS } from "./config.js";
+import { SITE, CREDENTIALS, FOCUS, PHOTOS, GALLERY, SERVICES, ROOF_SERVICES, MANAGEMENT, ABOUT, FAQS } from "./config.js";
 import { PROJECT_TYPES } from "../shared/projectTypes.js";
 import { EMPTY_FORM, RULES, validateForm, limitField, buildPayload, submitInquiry } from "./lib/inquiry.js";
 
@@ -50,6 +50,12 @@ function useToasts() {
     setTimeout(() => setList((p) => p.filter((t) => t.id !== id)), 5000);
   }, []);
   return [list, add];
+}
+
+// Jump to the form with a project type already picked.
+function startProject(type) {
+  window.dispatchEvent(new CustomEvent("stxc:project-type", { detail: type }));
+  go("contact");
 }
 
 function go(id) {
@@ -114,7 +120,7 @@ function CallBar() {
 }
 
 /* ── Nav ── */
-const NLINKS = [{ label: "Services", id: "services" }, { label: "Our Work", id: "work" }, { label: "Roofing", id: "roofing" }, { label: "About", id: "about" }, { label: "Frequently Asked Questions", id: "faq" }];
+const NLINKS = [{ label: "Services", id: "services" }, { label: "Our Work", id: "work" }, { label: "Roofing", id: "roofing" }, { label: "Project Management", id: "management" }, { label: "About", id: "about" }, { label: "Frequently Asked Questions", id: "faq" }];
 
 function Nav() {
   const sc = useScrolled();
@@ -183,7 +189,7 @@ function Hero() {
         <span style={{ display: "block", background: "linear-gradient(110deg,#3B82F6 0%,#60A5FA 45%,#F59E0B 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Trusted Across Texas.</span>
       </h1>
       <p style={{ fontSize: "clamp(1rem,1.8vw,1.15rem)", color: MID, maxWidth: "50ch", lineHeight: 1.75, marginBottom: "2.75rem", opacity: on ? 1 : 0, transition: tr(0.22) }}>
-        The Contractor nursing homes, assisted living facilities, and commercial properties rely on — phased renovations in occupied buildings, plus our own roofing crews, anywhere in Texas.
+        The Contractor nursing homes, assisted living facilities, and commercial properties rely on — phased renovations in occupied buildings, full project management, and our own roofing crews, anywhere in Texas.
       </p>
       <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap", opacity: on ? 1 : 0, transition: tr(0.3) }}>
         <Btn onClick={() => go("contact")} sx={{ padding: ".95rem 2.25rem", fontSize: ".98rem", fontWeight: 700 }}>Request an Estimate</Btn>
@@ -346,10 +352,49 @@ function Roofing() {
   </section>;
 }
 
+/* ── Project Management ── */
+function Management() {
+  return <section id="management" style={{ background: SRF, padding: "clamp(4.5rem,9vw,8rem) 0" }}>
+    <div className="wrap">
+      <div className="sp" style={{ alignItems: "start" }}>
+        <Rv>
+          <Eyebrow>Project Management</Eyebrow>
+          <SH sx={{ marginBottom: "1.25rem" }}>{MANAGEMENT.heading}</SH>
+          <p style={{ color: MID, fontSize: "1rem", lineHeight: 1.85, marginBottom: "2rem" }}>{MANAGEMENT.body}</p>
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.1rem" }}>
+            {MANAGEMENT.items.map((s) => <div key={s.title} style={{ display: "flex", gap: ".85rem" }}>
+              <span style={{ marginTop: 4 }}><Check /></span>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: "1rem", color: WHITE, marginBottom: ".2rem" }}>{s.title}</div>
+                <div style={{ fontSize: ".92rem", color: MID, lineHeight: 1.65 }}>{s.desc}</div>
+              </div>
+            </div>)}
+          </div>
+        </Rv>
+        <Rv d={0.1}>
+          <div style={{ background: RAISED, border: `1px solid ${BORDER}`, borderRadius: 16, padding: "clamp(1.5rem,4vw,2.25rem)" }}>
+            <h3 style={{ fontWeight: 800, fontSize: "1.3rem", color: WHITE, letterSpacing: "-.02em", marginBottom: "1.5rem" }}>How You Can Hire Us</h3>
+            <ol style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "1.25rem", marginBottom: "2rem" }}>
+              {MANAGEMENT.ways.map((w, i) => <li key={w.title} style={{ display: "flex", gap: "1rem" }}>
+                <span aria-hidden="true" style={{ flex: "0 0 auto", width: 34, height: 34, borderRadius: "50%", background: BLUELO, border: `1px solid ${BAC}`, color: BLUEHI, fontWeight: 800, fontSize: ".9rem", display: "flex", alignItems: "center", justifyContent: "center" }}>{i + 1}</span>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: "1rem", color: WHITE, marginBottom: ".2rem" }}>{w.title}</div>
+                  <div style={{ fontSize: ".92rem", color: MID, lineHeight: 1.65 }}>{w.desc}</div>
+                </div>
+              </li>)}
+            </ol>
+            <Btn onClick={() => startProject("Project Management")} sx={{ width: "100%" }}>Talk to Us About Managing Your Job</Btn>
+          </div>
+        </Rv>
+      </div>
+    </div>
+  </section>;
+}
+
 /* ── About ── */
 function About() {
   const yrs = new Date().getFullYear() - SITE.founded;
-  return <section id="about" style={{ background: SRF, padding: "clamp(4.5rem,9vw,8rem) 0" }}>
+  return <section id="about" style={{ background: BG, padding: "clamp(4.5rem,9vw,8rem) 0" }}>
     <div className="wrap">
       <div className="sp sp-rev">
         <Rv d={0.12}>
@@ -380,7 +425,7 @@ function About() {
 /* ── FAQ ── */
 function FAQ() {
   const [open, setOpen] = useState(null);
-  return <section id="faq" style={{ background: BG, padding: "clamp(5rem,10vw,9rem) 0" }}>
+  return <section id="faq" style={{ background: SRF, padding: "clamp(5rem,10vw,9rem) 0" }}>
     <div className="wrap">
       <Rv sx={{ marginBottom: "3.5rem" }}>
         <Eyebrow>Common Questions</Eyebrow>
@@ -417,6 +462,16 @@ function Contact({ addToast }) {
   const [touched, setTouched] = useState({});
   const [status, setStatus] = useState("idle"); // idle | sending | success | failed
   const startedAt = useRef(Date.now());
+
+  useEffect(() => {
+    const pick = (e) => {
+      if (!PROJECT_TYPES.includes(e.detail)) return;
+      setForm((p) => ({ ...p, projectType: e.detail }));
+      setErrors((er) => ({ ...er, projectType: undefined }));
+    };
+    window.addEventListener("stxc:project-type", pick);
+    return () => window.removeEventListener("stxc:project-type", pick);
+  }, []);
 
   const change = (k, raw) => {
     const v = limitField(k, raw);
@@ -459,12 +514,12 @@ function Contact({ addToast }) {
     "Name: " + form.firstName + " " + form.lastName + "\nEmail: " + form.email + "\nPhone: " + (form.phone || "N/A") + "\nProject: " + form.projectType + "\n\n" + form.message
   );
 
-  return <section id="contact" style={{ background: SRF, padding: "clamp(5rem,10vw,9rem) 0" }}>
+  return <section id="contact" style={{ background: BG, padding: "clamp(5rem,10vw,9rem) 0" }}>
     <div className="wrap ctg">
       <Rv>
         <Eyebrow>Get In Touch</Eyebrow>
         <SH sx={{ marginBottom: "1.1rem" }}>Start Your Project</SH>
-        <p style={{ color: MID, fontSize: "1rem", lineHeight: 1.85, marginBottom: "2.5rem" }}>Pre-survey renovation or full commercial build-out — tell us what you need and we'll follow up to set up a site visit and an estimate.</p>
+        <p style={{ color: MID, fontSize: "1rem", lineHeight: 1.85, marginBottom: "2.5rem" }}>Pre-survey renovation, commercial build-out, or a job you need managed — tell us what you need and we'll follow up to set up a site visit and an estimate.</p>
         <div style={{ display: "flex", flexDirection: "column", gap: "1.1rem", marginBottom: "2rem" }}>
           {[
             { label: "Phone", val: SITE.phone, href: telHref, icon: "📞" },
@@ -575,7 +630,7 @@ function Footer() {
   const cols = {
     Healthcare: [["Nursing Home Remodels", "services"], ["Assisted Living Renovations", "services"], ["Americans with Disabilities Act Upgrades", "services"], ["Clinical Spaces", "services"], ["New Construction", "services"]],
     Roofing: [["Commercial Re-Roofing", "roofing"], ["Healthcare Roofing", "roofing"], ["Storm and Emergency", "roofing"], ["Residential Roofing", "roofing"]],
-    Company: [["Our Work", "work"], ["About", "about"], ["Frequently Asked Questions", "faq"], ["Contact", "contact"]],
+    Company: [["Our Work", "work"], ["Project Management", "management"], ["About", "about"], ["Frequently Asked Questions", "faq"], ["Contact", "contact"]],
   };
   return <footer style={{ background: BG, borderTop: `1px solid ${BORDER}`, padding: "3.5rem 0 6rem" }}>
     <div className="wrap">
@@ -615,6 +670,7 @@ export default function App() {
       <Services />
       <Work />
       <Roofing />
+      <Management />
       <About />
       <FAQ />
       <Contact addToast={addToast} />

@@ -96,7 +96,7 @@ export function buildConfirmationEmail(d, meta) {
   const lines = [
     "Hi " + d.firstName + ",",
     "",
-    "Thanks for reaching out about your " + (d.projectType === "Other" ? "" : d.projectType + " ") + "project. We got your message and we'll get back to you within one business day.",
+    "Thanks for reaching out about " + (d.projectType === "Other" ? "your project" : d.projectType === "Project Management" ? "managing your project" : "your " + d.projectType + " project") + ". We got your message and we'll get back to you within one business day.",
     "",
   ];
   if (meta.phone) lines.push("Need us sooner? Call " + meta.phone + ".", "");

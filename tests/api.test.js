@@ -492,6 +492,8 @@ test("receipt wording: 'Other' reads naturally, real types are named", async () 
   const other = buildConfirmationEmail({ firstName: "Ana", projectType: "Other" }, meta);
   assert.match(other.text, /about your project\./);
   assert.doesNotMatch(other.text, /Other project/);
+  const pm = buildConfirmationEmail({ firstName: "Ana", projectType: "Project Management" }, meta);
+  assert.match(pm.text, /about managing your project\./);
   const named = buildConfirmationEmail({ firstName: "Ana", projectType: "Office Build-Out" }, meta);
   assert.match(named.text, /about your Office Build-Out project\./);
 });
@@ -501,4 +503,10 @@ test("inquiry email spells out Reference and Central Time", async () => {
   const m = buildInquiryEmail({ firstName: "Ana", lastName: "Ruiz", email: "ana@example.com", phone: "", projectType: "Other", message: "Need a quote for a small job." }, { id: "abc-123", company: "South Texas Construction By Design" });
   assert.match(m.text, /\(Central Time\) · Reference abc-123/);
   assert.doesNotMatch(m.text + m.html, /\bRef\b/);
+});
+
+test("Project Management is a valid project type end to end", async () => {
+  const r = res();
+  await contact(req({ body: { ...goodBody(), projectType: "Project Management", message: "We have our own subs and need someone to run the schedule." } }), r);
+  assert.equal(r.statusCode, 200);
 });

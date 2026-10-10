@@ -19,7 +19,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid #60A5FA; outline-offs
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .call-bar { display: none; }
-@media (max-width: 1080px) { .desk { display: none !important; } .mob { display: flex !important; } }
+@media (max-width: 1280px) { .desk { display: none !important; } .mob { display: flex !important; } }
 @media (max-width: 768px) { .call-bar { display: flex !important; } }
 
 .tw { position: fixed; bottom: 1.5rem; right: 1.5rem; display: flex; flex-direction: column; gap: .5rem; z-index: 9999; pointer-events: none; }
