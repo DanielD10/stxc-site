@@ -1,6 +1,8 @@
-# STXC Website — Setup Guide (start to live)
+# STXC Website — Setup Guide
 
-Plan on about an hour the first time. You need 3 free accounts: **GitHub** (stores the code), **Vercel** (runs the site), **Resend** (sends the emails).
+Hosting: **Cloudflare (free)** · Domain: **southtxbydesign.com** (~$10.46/yr) · Email: **Resend (free)** · Code: **GitHub (private, free)**
+
+Leads from the form go to **jrduran75@yahoo.com**, and his phone gets a push alert.
 
 ---
 
@@ -8,230 +10,121 @@ Plan on about an hour the first time. You need 3 free accounts: **GitHub** (stor
 
 ```
 stxc-site/
-  api/contact.js      ← the backend: receives the form, checks it, emails you
-  api/health.js       ← a status page: /api/health tells you if email is set up
-  api/_lib/           ← the middleware: security, rate limits, validation, email
-  src/config.js       ← ★ THE ONLY FILE YOU EDIT for words, phone, photo captions
+  src/config.js       ← ★ THE FILE YOU EDIT: words, phone, email, photo captions
   public/photos/      ← the real job photos
-  src/App.jsx         ← the website itself
-  shared/             ← the project-type list (used by site AND backend)
-  tests/              ← automatic checks (npm test)
-  vercel.json         ← hosting + security settings
-  .env.example        ← list of settings the backend needs
+  api/contact.js      ← the backend: receives the form, checks it, emails him, alerts his phone
+  api/health.js       ← status page: /api/health tells you if email + alerts are set up
+  api/_lib/           ← the middleware: security, rate limits, validation, email, alerts
+  worker/index.js     ← plugs the backend into Cloudflare
+  wrangler.jsonc      ← Cloudflare settings
+  public/_headers     ← security headers for every page
+  tests/              ← 49 automatic checks (npm test)
+  vercel.json         ← lets the same code run on Vercel later if you ever move it
 ```
 
 ---
 
-## Step 1 — Install the tools (one time, 10 min)
+## Part A — On your computer (first time only)
 
-1. **Node.js** — go to **nodejs.org**, click the green **LTS** button, install, click Next through everything.
-2. **Git** — Mac: skip, it installs itself the first time you use it. Windows: go to **git-scm.com**, download, install with all the defaults.
-3. **VS Code** (for editing files) — **code.visualstudio.com**, install.
+**1. Install tools:** **nodejs.org** (green LTS button), **git-scm.com** (Windows only; Macs have it), **code.visualstudio.com** (editor).
 
-Check it worked. Open **Terminal** (Mac: press `Cmd + Space`, type `terminal`, Enter) or **Command Prompt** (Windows: press the Windows key, type `cmd`, Enter) and type:
-
+**2. Get the code:**
 ```
-node --version
-```
-
-Any number like `v22.x.x` means you're good.
-
----
-
-## Step 2 — Put the folder on your Desktop and install (3 min)
-
-1. Unzip `stxc-site.zip`. Move the `stxc-site` folder to your **Desktop**.
-2. In Terminal:
-
-Mac:
-```
-cd ~/Desktop/stxc-site
-```
-Windows:
-```
-cd %USERPROFILE%\Desktop\stxc-site
-```
-
-3. Then:
-```
+git clone https://github.com/DanielD10/stxc-site.git
+cd stxc-site
 npm install
 ```
-Wait for it to finish (about 30 seconds, lots of text is normal).
 
----
-
-## Step 3 — See it run on your computer (2 min)
-
+**3. Run it locally:**
 ```
 npm run dev
 ```
+Open **http://localhost:5173**. Send a test inquiry — the email prints in the Terminal as a **DRY RUN** (nothing is sent from your computer). `Ctrl + C` stops it.
 
-Open **http://localhost:5173** in your browser. That's the site.
-
-Scroll to the form and send a test inquiry. Look back at Terminal — you'll see the email printed there with **DRY RUN**. That means the whole backend worked; it just didn't actually send because there's no email key on your computer yet. That's on purpose.
-
-Press `Ctrl + C` in Terminal to stop it.
-
----
-
-## Step 4 — Put in the real business info (5 min)
-
-Open the `stxc-site` folder in VS Code (File → Open Folder). Open **`src/config.js`** and fix:
-
-- **phone** — the real business number (it's still a placeholder)
-- **email** and **founded** — confirm they're right
-- **CREDENTIALS** — only real ones (insurance, RCAT roofing license, OSHA training). Texas has no state GC license or state roofing license, so don't list a "state license." Leave it empty if unsure.
-
-Save, then run:
-```
-npm run check
-```
-Fix whatever it lists with ✗ until it says **✓ No placeholders or missing photos.**
-
-Optional but smart — run the automatic tests:
-```
-npm test
-```
-You should see `pass 41` and `fail 0`.
-
-### Adding or swapping photos later
-1. Put the photo in `public/photos/` twice: `name.webp` (big, ~1600px wide) and `name-sm.webp` (small, ~720px wide). Free converter: **squoosh.app** (pick WebP). Or send the photos to me and I'll convert them.
-2. Add a line to `GALLERY` in `src/config.js`: `{ photo: "name", caption: "What the job was" }`
-3. `npm run check` tells you if a photo file is missing.
+| Command | What it does |
+|---|---|
+| `npm run check` | Flags anything placeholder or missing |
+| `npm test` | Runs all 49 checks |
+| `npm run test-alert` | Sends a test lead alert to his phone (uses `.env.local`) |
+| `npm run telegram-id` | Finds his Telegram chat ID |
+| `npm run cf:dev` | Runs the site inside Cloudflare's real runtime locally |
 
 ---
 
-## Step 5 — Resend: the email service (5 min)
+## Part B — Go live on Cloudflare
 
-> ⚠️ **Make the Resend account with `jrduran75@yahoo.com`.**
-> Until a business domain is verified (Step 10), Resend only delivers to the email the account was created with. If you sign up with your own email, his inquiries go to you, not him.
+### B1. Cloudflare account + domain (10 min)
+1. **cloudflare.com** → **Sign up** → verify email.
+2. Left menu → **Domain Registration** → **Register Domains** → search **southtxbydesign.com** → buy (~$10.46/yr, renews at the same price).
 
-1. Go to **resend.com** → Sign up with **jrduran75@yahoo.com**. He'll get a confirmation email — have him open it and tap the link (or sit with him and do it together).
-2. Left menu → **API Keys** → **Create API Key** → name it `STXC website` → permission **Sending access** → Create.
-3. **Copy the key now** (starts with `re_`). It's only shown once. Paste it in a note for Step 7.
+### B2. Deploy from GitHub (5 min)
+1. Left menu → **Compute (Workers)** → **Workers & Pages** → **Create** → **Import a repository**.
+2. **Connect GitHub** → allow access to **stxc-site** → select it.
+3. On the settings screen:
+   - **Worker name:** `stxc-site` (must match `name` in `wrangler.jsonc`)
+   - **Build command:** `npm run build` ← required, it won't deploy without it
+   - **Deploy command:** `npx wrangler deploy` (the default)
+   - Leave root directory blank.
+4. **Deploy.** A minute or two later you get a link like `https://stxc-site.<your-name>.workers.dev`. The site is live there.
 
----
+### B3. Hook up southtxbydesign.com (2 min)
+1. Open the **stxc-site** Worker → **Settings** → **Domains & Routes** → **Add** → **Custom Domain** → `southtxbydesign.com` → **Add Custom Domain**.
+2. Repeat for `www.southtxbydesign.com`.
+3. Cloudflare makes the DNS records and HTTPS certificate on its own. Give it a few minutes.
 
-## Step 6 — GitHub: store the code (10 min)
+The contact form works on every address automatically — no code change.
 
-1. Go to **github.com** → Sign up → confirm your email.
-2. Top right **+** → **New repository** → name: `stxc-site` → choose **Private** → **Create repository**.
-3. In Terminal (still in the `stxc-site` folder), run these one at a time. Replace `YOURNAME` with your GitHub username:
+### B4. Email: verify the business domain (10 min)
+Resend only delivers to outside inboxes (like his Yahoo) after the domain is verified.
 
-```
-git init
-git add .
-git commit -m "Launch STXC website"
-git branch -M main
-git remote add origin https://github.com/YOURNAME/stxc-site.git
-git push -u origin main
-```
+1. **Resend** → **Domains** → `southtxbydesign.com` shows a list of DNS records (TXT and MX).
+2. **Cloudflare** → **southtxbydesign.com** → **DNS** → **Records** → **Add record** for each one. Copy them **exactly**. Set each to **DNS only** (grey cloud).
+3. Back in Resend → **Verify**. Usually done in minutes.
 
-**If it asks you to log in:**
-- Windows: a GitHub window pops up — sign in there.
-- Mac: it asks for a username and password. The password is NOT your GitHub password. Make a token: github.com → your photo (top right) → **Settings** → bottom of the left menu **Developer settings** → **Personal access tokens** → **Tokens (classic)** → **Generate new token (classic)** → name it, check the **repo** box → **Generate** → copy it → paste it as the password. (You won't see it as you paste. Normal. Press Enter.)
-
-Refresh the GitHub page. Your files should be there.
-
-> If `git commit` complains about "Please tell me who you are," run these two lines (with your info) and try again:
-> `git config --global user.name "Your Name"`
-> `git config --global user.email "you@example.com"`
-
----
-
-## Step 7 — Vercel: put it on the internet (5 min)
-
-1. Go to **vercel.com** → **Sign Up** → **Continue with GitHub** → allow access.
-2. **Add New…** → **Project** → find `stxc-site` → **Import**.
-3. Leave the build settings alone (it detects Vite on its own).
-4. Open **Environment Variables** on that same screen and add:
+### B5. Add the backend settings (5 min)
+Worker **stxc-site** → **Settings** → **Variables and Secrets** → **Add** → type **Secret** for each:
 
 | Name | Value |
-|------|-------|
-| `RESEND_API_KEY` | your `re_...` key from Step 5 |
+|---|---|
+| `RESEND_API_KEY` | the `re_...` key |
 | `TO_EMAIL` | `jrduran75@yahoo.com` |
-| `COMPANY_PHONE` | the real business phone (optional) |
+| `FROM_EMAIL` | `South Texas Construction By Design <website@southtxbydesign.com>` |
+| `COMPANY_PHONE` | `(210) 367-6648` |
+| `SEND_CONFIRMATION` | `true` (customers get a "we got your message" email) |
 
-5. Click **Deploy**. About a minute later you get a link like `https://stxc-site-xxxx.vercel.app`.
+> ⚠️ Use **Variables and Secrets** (runtime), not **Build variables** — those never reach the form.
 
-> Added the variables after deploying? Go to **Deployments** → the top one → **⋯** → **Redeploy**. Settings only kick in on a new deploy.
+Then redeploy (Worker → **Deployments**), or just push any change.
 
----
-
-## Step 8 — Prove it works (2 min)
-
-1. Open `https://YOUR-LINK.vercel.app/api/health`
-   You should see `"email":"ready"`. If it says `NOT ready`, the `missingSettings` list tells you which setting is missing.
-2. Open the site, fill out the form like a customer would, send it.
-3. Check the inbox (and the **spam** folder the first time). You'll get a formatted email. Hit **Reply** and it goes straight to the customer.
-
-**That's live.** Everything after this is optional polish.
+### B6. Prove it works (2 min)
+1. Open **https://southtxbydesign.com/api/health** → `"email":"ready"` and `"sender":"custom verified domain"`.
+2. Fill out the form like a customer. Check his Yahoo — and **Spam** the first time. Mark it **Not Spam**.
+3. Hit **Reply** in that email → it goes straight to the customer.
 
 ---
 
-## Step 9 — Phone alerts: buzz his phone on every lead (10 min, free)
+## Part C — Phone alerts (10 min, free)
 
-Texting through email is basically dead — AT&T and T-Mobile shut theirs down in 2025 and Verizon's ends by March 2027 — and real SMS costs money and carrier paperwork. So the site sends a **free push notification** instead. It looks and sounds like a text, shows the person's name, project, and phone number, and goes out **even if the email fails**.
+Free email-to-text is gone (AT&T and T-Mobile shut theirs off in 2025, Verizon's ends by March 2027), so this sends a **push notification**: name, project, phone number. It goes out even if the email fails.
 
-Pick one. Telegram works great on iPhone and Android. ntfy is quicker but best on Android.
-
-### Option A — Telegram (recommended)
-
-On **your** phone or computer:
-1. Install **Telegram**, open it, search **@BotFather** (blue check mark), tap **Start**.
-2. Send `/newbot`. Name it `STXC Leads`. Give it a username ending in `bot`, like `stxc_leads_alerts_bot`.
-3. BotFather replies with a **token** (looks like `7123456789:AAH...`). Copy it.
-
-On **his** phone:
-4. Install **Telegram** and sign up with his number.
-5. Open the link BotFather gave you (`t.me/your_bot_name`) and tap **Start**.
-
-Back on your computer, in the `stxc-site` folder:
-6. Make a file named `.env.local` (copy `.env.example` and rename it) and put in:
+### Option A — Telegram (recommended; iPhone or Android)
+1. Your phone: install **Telegram** → search **@BotFather** → **Start** → send `/newbot` → name it `STXC Leads` → username ending in `bot`. Copy the **token**.
+2. **His** phone: install Telegram → open the `t.me/...` link BotFather gave you → tap **Start**.
+3. In the project folder, create `.env.local` with:
    ```
-   TELEGRAM_BOT_TOKEN=paste-the-token-here
+   TELEGRAM_BOT_TOKEN=paste-token-here
    ```
-7. Run:
-   ```
-   npm run telegram-id
-   ```
-   It prints a line like `TELEGRAM_CHAT_ID=123456789 (his name)`. Add that line to `.env.local`.
-8. Run:
-   ```
-   npm run test-alert
-   ```
-   His phone should buzz with a test lead. If it did, it works.
-9. Add both `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` in Vercel → Settings → Environment Variables, then Redeploy.
+4. `npm run telegram-id` → prints `TELEGRAM_CHAT_ID=...`. Add that line to `.env.local`.
+5. `npm run test-alert` → his phone buzzes.
+6. Add `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` as **Secrets** in Cloudflare (same screen as B5).
 
-### Option B — ntfy (no account)
-1. On his phone, install **ntfy** (App Store or Google Play).
-2. Tap **+** → subscribe to a long, random topic name (use the one I gave you, or make one up like `stxc-leads-8f3k2q9w7z`). **Anyone who knows the name can read the alerts, so keep it private.**
-3. Put `NTFY_TOPIC=that-name` in `.env.local`, run `npm run test-alert`, then add `NTFY_TOPIC` in Vercel and Redeploy.
+### Option B — ntfy (no account; best on Android)
+1. His phone: install **ntfy** → **+** → subscribe to a long private topic name.
+2. Add `NTFY_TOPIC` = that name as a **Secret** in Cloudflare. Anyone who knows the name can read the alerts — keep it private.
 
-Check `/api/health` after redeploying — `phoneAlerts` should say `telegram` or `ntfy` instead of `off`.
+Afterward, `/api/health` shows `phoneAlerts: telegram` (or `ntfy`) instead of `off`.
 
-### Also do this on his phone (2 min)
-- Install the **Yahoo Mail** app and turn notifications **on**.
-- The first lead email may land in **Spam**. Open it, tap **Not Spam**, and add `onboarding@resend.dev` to his contacts so the rest go to the inbox.
-
----
-
-## Step 10 — Custom domain + professional sender (optional, 20 min + waiting)
-
-**Hook up the domain:**
-1. Vercel → your project → **Settings** → **Domains** → type the domain (like `stxcbydesign.com`) → **Add**.
-2. Vercel shows you DNS records. Log in where the domain was bought (GoDaddy, Namecheap, etc.), find **DNS settings**, and add those records **exactly as Vercel shows them**.
-3. Wait 15 minutes to a few hours. Vercel turns on HTTPS by itself.
-
-The form works on the new domain automatically — no code change needed.
-
-**Send from the business domain (recommended):**
-1. Resend → **Domains** → **Add Domain** → enter the domain → add the records it shows at your domain company → wait for **Verified**.
-2. Vercel → **Settings** → **Environment Variables** → add:
-   - `FROM_EMAIL` = `STXC Website <website@yourdomain.com>`
-   - `SEND_CONFIRMATION` = `true` (customers get a "we got your message" email)
-3. Now `TO_EMAIL` can be any inbox, and you can list more than one: `owner@x.com, office@x.com`
-4. Redeploy (Deployments → ⋯ → Redeploy).
+**Also on his phone:** install the **Yahoo Mail** app with notifications on.
 
 ---
 
@@ -240,10 +133,12 @@ The form works on the new domain automatically — no code change needed.
 Edit (usually `src/config.js`), save, then:
 ```
 git add .
-git commit -m "describe the change"
+git commit -m "what changed"
 git push
 ```
-Vercel rebuilds and the live site updates in about a minute.
+Cloudflare rebuilds and the live site updates in about a minute (Worker → **Deployments**).
+
+**Adding photos:** put `name.webp` (~1600px wide) and `name-sm.webp` (~720px wide) in `public/photos/` (free converter: **squoosh.app** → WebP), then add `{ photo: "name", caption: "What the job was" }` to `GALLERY` in `src/config.js`.
 
 ---
 
@@ -251,33 +146,20 @@ Vercel rebuilds and the live site updates in about a minute.
 
 | What you see | What to do |
 |---|---|
-| `/api/health` says `NOT ready` | Add the setting it names in Vercel → Environment Variables, then Redeploy. |
-| Form says "That didn't go through" | Open `/api/health`. If it says ready, check Vercel → your project → **Logs** for a line with `send_failed`. Usually a wrong/deleted Resend key. |
-| "Too many messages" | Rate limit: 5 messages per 10 minutes from one connection. Wait 10 minutes. |
-| No phone alert | Check `/api/health` → `phoneAlerts`. If it says `off`, the settings aren't in Vercel (or you didn't Redeploy). Run `npm run test-alert` on your computer to test the phone side. |
-| Lead email not in his inbox | Look in Yahoo **Spam**, mark it Not Spam. Make sure the Resend account was made with jrduran75@yahoo.com. |
-| `npm install` errors | Make sure you're inside the `stxc-site` folder (`cd` step) and Node is installed. |
+| Cloudflare build failed | Open the failed deployment's log. Usually the **Build command** isn't `npm run build`, or the Worker name isn't `stxc-site`. |
+| `/api/health` says `NOT ready` | Add the setting it names under **Variables and Secrets** (not Build variables), then redeploy. |
+| Form says "That didn't go through" | Check `/api/health`, then Worker → **Observability / Logs** for `send_failed`. Usually the domain isn't verified in Resend yet, or the key is wrong. |
+| No email in Yahoo | Check **Spam**. Confirm the domain shows **Verified** in Resend. |
+| No phone alert | `/api/health` → `phoneAlerts`. If `off`, the secrets aren't set. Run `npm run test-alert` locally. |
+| "Too many messages" | Rate limit: 5 per 10 minutes per connection. Wait 10 minutes. |
 | Site looks old after pushing | Wait a minute, then hard-refresh (`Cmd+Shift+R` / `Ctrl+F5`). |
 
 ---
 
 ## What's protecting the site
 
-**Every request to the form goes through this chain:**
-1. **Request ID** — every message gets a reference number that shows up in the email and the logs.
-2. **Security headers** — no caching of form data, no embedding, no sniffing.
-3. **Origin check** — only the site itself can send to the form. Other websites and scripts get blocked.
-4. **Method check** — only POST.
-5. **Rate limit** — 5 per 10 minutes per connection.
-6. **Content-type + size limits** — only JSON, max 16 KB.
-7. **Safe parsing** — broken or weird data gets a clean error, not a crash.
-8. **Bot traps** — a hidden field bots fill out, and a "too fast to be human" timer. Bots get a fake success and nothing is sent.
-9. **Validation** — same rules on the site and the server. The server always re-checks.
-10. **Safe email** — everything a visitor types is escaped, so nobody can inject code or extra recipients into the email.
-11. **Reliable sending** — 8-second timeout, one automatic retry, and duplicate protection so a double-click never sends twice.
+**Every form submission passes through, in order:** request ID → security headers → origin check (only the site itself can post) → POST-only → rate limit (5 per 10 min, keyed on Cloudflare's real visitor IP) → JSON-only, 16 KB max → safe parsing → bot traps (hidden field + too-fast timer) → validation (same rules on site and server) → HTML-escaped email (no code or extra recipients can be injected) → timed, retried, duplicate-proof sending → phone alert.
 
-**Whole site:** strict Content Security Policy, HTTPS-only (HSTS), no framing, locked-down browser permissions.
+**Whole site:** strict Content Security Policy (only the site's own scripts, images, and Google Fonts load), HTTPS-only (HSTS), no framing, locked-down browser permissions, photo metadata stripped.
 
-**Optional upgrades:**
-- **Upstash Redis** (free at upstash.com) — add `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` in Vercel and the rate limit is shared across every server instead of per-server.
-- **Vercel Firewall** — your project has a Firewall tab with bot protection you can turn on.
+**Costs:** domain ~$10.46/yr. Everything else is on free plans: Cloudflare (100k API requests/day, unlimited page views), Resend (3,000 emails/month), Telegram/ntfy, GitHub.
