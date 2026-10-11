@@ -1,7 +1,8 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+/* Type scales with the screen: 17px on phones and laptops, up to 22px on big monitors. */
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; font-size: clamp(17px, calc(3px + .95vw), 22px); }
 body { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif; background: #080C14; color: #F9FAFB; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-section[id] { scroll-margin-top: 64px; }
+section[id] { scroll-margin-top: 5rem; }
 a { color: inherit; text-decoration: none; }
 img { display: block; max-width: 100%; }
 button { font-family: inherit; }
@@ -19,13 +20,15 @@ a:focus-visible, button:focus-visible { outline: 2px solid #60A5FA; outline-offs
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .call-bar { display: none; }
-@media (max-width: 1280px) { .desk { display: none !important; } .mob { display: flex !important; } }
+@media (max-width: 1300px) { .desk { display: none !important; } .mob { display: flex !important; } }
 @media (max-width: 768px) { .call-bar { display: flex !important; } }
+@media (max-width: 520px) { .nav-extra { display: none; } }
 
 .tw { position: fixed; bottom: 1.5rem; right: 1.5rem; display: flex; flex-direction: column; gap: .5rem; z-index: 9999; pointer-events: none; }
 @media (max-width: 768px) { .tw { bottom: 5.5rem; right: .75rem; left: .75rem; } }
 
-.wrap { width: min(1200px, 94vw); margin-inline: auto; }
+.wrap { width: min(84rem, 92vw); margin-inline: auto; }
+@media (min-width: 1100px) { .wrap { width: min(84rem, 95vw); } }
 .sg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
 @media (max-width: 1024px) { .sg { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 600px) { .sg { grid-template-columns: 1fr; } }
@@ -39,20 +42,24 @@ a:focus-visible, button:focus-visible { outline: 2px solid #60A5FA; outline-offs
 @media (max-width: 480px) { .tg { grid-template-columns: 1fr; } }
 .testg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
 @media (max-width: 860px) { .testg { grid-template-columns: 1fr; } }
-.ctg { display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(2.5rem, 6vw, 5rem); align-items: start; }
+.ctg { display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(2.5rem, 6vw, 5rem); align-items: center; }
 @media (max-width: 860px) { .ctg { grid-template-columns: 1fr; gap: 2.5rem; } }
 .fg { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 2.5rem; margin-bottom: 2.5rem; }
 @media (max-width: 900px) { .fg { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 480px) { .fg { grid-template-columns: 1fr; gap: 1.75rem; } }
 .stats { display: flex; gap: 2.5rem; flex-wrap: wrap; margin-top: 3.5rem; padding-top: 2.5rem; border-top: 1px solid rgba(255, 255, 255, .07); }
 .stat { min-width: 80px; flex: 1 1 80px; }
-.ci { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .5rem 1.5rem; padding: .25rem 2vw; }
-@media (min-width: 600px) { .ci { gap: clamp(.75rem, 2.5vw, 2rem); } }
+/* Strip under the hero: one row on big screens, wraps evenly below that. */
+.ci { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .75rem 1.75rem; padding: .35rem 0; }
+.ci-item { font-size: .78rem; white-space: nowrap; }
+@media (max-width: 1439px) { .ci { display: grid; grid-template-columns: repeat(3, auto); justify-content: space-around; } }
+@media (max-width: 900px) { .ci { grid-template-columns: repeat(2, auto); } }
+@media (max-width: 600px) { .ci { grid-template-columns: repeat(2, minmax(0, 1fr)); justify-content: space-between; gap: .7rem 1rem; } .ci-item { font-size: .7rem; letter-spacing: .06em !important; white-space: normal; align-items: flex-start !important; } .ci-item svg { margin-top: .2em; flex: 0 0 auto; } }
 .nrow { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 @media (max-width: 400px) { .nrow { grid-template-columns: 1fr; } }
 
 /* Form fields. 16px text stops iPhones from zooming in on tap. */
-.fld { width: 100%; background-color: #1A2234; border: 1px solid rgba(255, 255, 255, .08); border-radius: 8px; padding: .8rem .95rem; color: #F9FAFB; font-family: inherit; font-size: 16px; line-height: 1.4; outline: none; transition: border-color .2s, box-shadow .2s; -webkit-appearance: none; appearance: none; }
+.fld { width: 100%; background-color: #1A2234; border: 1px solid rgba(255, 255, 255, .08); border-radius: 8px; padding: .8rem .95rem; color: #F9FAFB; font-family: inherit; font-size: max(16px, 1rem); line-height: 1.4; outline: none; transition: border-color .2s, box-shadow .2s; -webkit-appearance: none; appearance: none; }
 .fld::placeholder { color: #828A98; }
 .fld:focus { border-color: #3B82F6; box-shadow: 0 0 0 3px rgba(59, 130, 246, .15); }
 .fld.err { border-color: rgba(239, 68, 68, .6); box-shadow: 0 0 0 3px rgba(239, 68, 68, .1); }
@@ -73,9 +80,39 @@ select.fld option { background: #1A2234; color: #F9FAFB; }
 /* Our Work gallery */
 .gg { display: grid; grid-template-columns: repeat(3, 1fr); gap: .9rem; }
 @media (max-width: 900px) { .gg { grid-template-columns: repeat(2, 1fr); gap: .6rem; } }
-.gtile { position: relative; display: block; width: 100%; height: clamp(150px, 22vw, 250px); padding: 0; border-radius: 12px; overflow: hidden; background: #1A2234; cursor: zoom-in; transition: border-color .25s; }
+.gtile { position: relative; display: block; width: 100%; height: clamp(150px, 22vw, 20rem); padding: 0; border-radius: 12px; overflow: hidden; background: #1A2234; cursor: zoom-in; transition: border-color .25s; }
 .gtile img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
-.gcap { position: absolute; left: 0; right: 0; bottom: 0; padding: 1.6rem .85rem .7rem; text-align: left; font-size: .8rem; font-weight: 600; line-height: 1.35; color: #F9FAFB; background: linear-gradient(to top, rgba(8,12,20,.92), transparent); }
-@media (max-width: 600px) { .gcap { font-size: .7rem; padding: 1.2rem .6rem .5rem; } }
+.gcap { position: absolute; left: 0; right: 0; bottom: 0; padding: 1.6rem .85rem .7rem; text-align: left; font-size: .86rem; font-weight: 600; line-height: 1.35; color: #F9FAFB; background: linear-gradient(to top, rgba(8,12,20,.92), transparent); }
+@media (max-width: 600px) { .gcap { font-size: .76rem; padding: 1.2rem .6rem .5rem; } }
 @media (max-width: 600px) { .lbnav { top: auto !important; bottom: 1.25rem !important; transform: none !important; } }
 @media (max-width: 860px) { .sp-rev > :last-child { order: -1; } }
+
+/* Section headers: title left, intro right on wide screens */
+.shead { display: grid; gap: 1rem; }
+@media (min-width: 1100px) { .shead { grid-template-columns: 1fr 1fr; align-items: end; gap: 3rem; } .shead > p { justify-self: end; } }
+h1, h2, h3 { text-wrap: balance; }
+
+/* Frequently Asked Questions: intro on the left, questions on the right */
+.faqg { display: grid; gap: 2.5rem; }
+.faq-cta { display: none; }
+@media (min-width: 1100px) {
+  .faqg { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 4rem; align-items: stretch; }
+  .faq-side { position: sticky; top: 7rem; }
+  .faq-cta { display: block; }
+  .faq-cta-mob { display: none; }
+}
+
+/* Hero: headline left, photo and quick facts right on wide screens */
+.hero-g { display: grid; gap: 2.5rem; }
+.hero-h1 { font-size: clamp(3rem, 8.3vw, 7rem); }
+.hero-photo { display: none; }
+.hero-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+@media (min-width: 700px) and (max-width: 1099px) { .hero-facts { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 1100px) {
+  .hero-g { grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); align-items: center; gap: clamp(2.5rem, 4vw, 5rem); }
+  .hero-h1 { font-size: clamp(3rem, 4.9vw, 6.4rem); }
+  .hero-photo { display: block; height: clamp(16rem, min(26vw, 46vh), 28rem); margin-bottom: .75rem !important; }
+}
+
+/* Project management checklist */
+.mg-list { display: flex; flex-direction: column; gap: 1.1rem; }

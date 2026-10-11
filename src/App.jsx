@@ -9,7 +9,8 @@ const BLUE = "#3B82F6", BLUEHI = "#60A5FA", BLUELO = "rgba(59,130,246,0.10)";
 const AMBER = "#F59E0B", RED = "#EF4444";
 const WHITE = "#F9FAFB", MID = "#9CA3AF", MUTED = "#828A98", FAINT = "#828A98";
 const BORDER = "rgba(255,255,255,0.06)", BAC = "rgba(59,130,246,0.28)";
-const NAV_H = 64;
+// Height of the top bar only (not the open phone menu).
+const navHeight = () => (document.querySelector("#nav > div") || {}).offsetHeight || 64;
 
 const photo = (name, small) => "/photos/" + name + (small ? "-sm" : "") + ".webp";
 const telHref = "tel:" + SITE.phone.replace(/[^\d+]/g, "");
@@ -61,7 +62,7 @@ function startProject(type) {
 function go(id) {
   const el = document.getElementById(id);
   if (!el) return;
-  window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - NAV_H, behavior: "smooth" });
+  window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - navHeight(), behavior: "smooth" });
 }
 
 /* ── Atoms ── */
@@ -73,7 +74,7 @@ function Rv({ children, d = 0, sx = {} }) {
 function Eyebrow({ children }) {
   return <div style={{ display: "inline-flex", alignItems: "center", gap: ".5rem", marginBottom: "1rem" }}>
     <span style={{ display: "inline-block", width: 24, height: 2, background: "linear-gradient(90deg,#3B82F6,#60A5FA)", borderRadius: 1 }} />
-    <span style={{ fontSize: ".66rem", fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: BLUEHI }}>{children}</span>
+    <span style={{ fontSize: ".72rem", fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: BLUEHI }}>{children}</span>
   </div>;
 }
 
@@ -84,13 +85,13 @@ function SH({ children, sx = {} }) {
 function Tag({ children, v = "blue" }) {
   const colors = { blue: { bg: "rgba(59,130,246,.12)", color: "#93C5FD", b: "rgba(59,130,246,.25)" }, red: { bg: "rgba(239,68,68,.1)", color: "#FCA5A5", b: "rgba(239,68,68,.25)" }, amber: { bg: "rgba(245,158,11,.1)", color: "#FCD34D", b: "rgba(245,158,11,.25)" } };
   const c = colors[v] || colors.blue;
-  return <span style={{ display: "inline-block", fontSize: ".6rem", fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", borderRadius: 4, padding: ".14rem .5rem", background: c.bg, color: c.color, border: `1px solid ${c.b}` }}>{children}</span>;
+  return <span style={{ display: "inline-block", fontSize: ".66rem", fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", borderRadius: 4, padding: ".14rem .5rem", background: c.bg, color: c.color, border: `1px solid ${c.b}` }}>{children}</span>;
 }
 
 function Btn({ onClick, href, v = "pri", type = "button", children, disabled = false, sx = {} }) {
   const [hov, setHov] = useState(false);
   const isPri = v === "pri";
-  const s = { display: "inline-flex", alignItems: "center", justifyContent: "center", gap: ".5rem", padding: ".8rem 1.75rem", borderRadius: 8, fontWeight: 600, fontSize: ".9rem", cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.6 : 1, transition: "all .2s ease", background: isPri ? (hov && !disabled ? BLUEHI : BLUE) : "transparent", color: isPri ? BG : hov ? WHITE : MID, border: isPri ? "none" : `1px solid ${hov ? "rgba(255,255,255,.16)" : "rgba(255,255,255,.1)"}`, boxShadow: isPri ? (hov && !disabled ? "0 0 32px rgba(59,130,246,.5)" : "0 0 14px rgba(59,130,246,.18)") : "none", transform: hov && !disabled ? "translateY(-1px)" : "none", textDecoration: "none", ...sx };
+  const s = { display: "inline-flex", alignItems: "center", justifyContent: "center", gap: ".5rem", padding: ".8rem 1.75rem", borderRadius: 8, fontWeight: 600, fontSize: ".96rem", cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.6 : 1, transition: "all .2s ease", background: isPri ? (hov && !disabled ? BLUEHI : BLUE) : "transparent", color: isPri ? BG : hov ? WHITE : MID, border: isPri ? "none" : `1px solid ${hov ? "rgba(255,255,255,.16)" : "rgba(255,255,255,.1)"}`, boxShadow: isPri ? (hov && !disabled ? "0 0 32px rgba(59,130,246,.5)" : "0 0 14px rgba(59,130,246,.18)") : "none", transform: hov && !disabled ? "translateY(-1px)" : "none", textDecoration: "none", ...sx };
   const h = { style: s, onMouseEnter: () => setHov(true), onMouseLeave: () => setHov(false) };
   if (href) return <a href={href} {...h}>{children}</a>;
   return <button type={type} onClick={onClick} disabled={disabled} {...h}>{children}</button>;
@@ -106,7 +107,7 @@ function Check({ size = 16, sw = 2.5 }) {
 
 function Toasts({ list }) {
   return <div className="tw" role="status" aria-live="polite">
-    {list.map((t) => <div key={t.id} style={{ background: RAISED, border: `1px solid ${t.type === "error" ? "rgba(239,68,68,.35)" : "rgba(59,130,246,.35)"}`, borderRadius: 10, padding: ".85rem 1.1rem", display: "flex", alignItems: "center", gap: ".7rem", fontSize: ".9rem", color: WHITE, maxWidth: 340, pointerEvents: "all", boxShadow: "0 8px 32px rgba(0,0,0,.6)", animation: "toast .3s ease forwards" }}>
+    {list.map((t) => <div key={t.id} style={{ background: RAISED, border: `1px solid ${t.type === "error" ? "rgba(239,68,68,.35)" : "rgba(59,130,246,.35)"}`, borderRadius: 10, padding: ".85rem 1.1rem", display: "flex", alignItems: "center", gap: ".7rem", fontSize: ".96rem", color: WHITE, maxWidth: 340, pointerEvents: "all", boxShadow: "0 8px 32px rgba(0,0,0,.6)", animation: "toast .3s ease forwards" }}>
       <span style={{ color: t.type === "error" ? RED : BLUE, flexShrink: 0 }} aria-hidden="true">{t.type === "error" ? "!" : "✓"}</span>
       {t.msg}
     </div>)}
@@ -136,14 +137,14 @@ function Nav() {
   const nav = (id) => { setOpen(false); go(id); };
   const solid = sc || open;
   return <nav id="nav" aria-label="Main" style={{ position: "fixed", inset: "0 0 auto 0", zIndex: 100, background: solid ? "rgba(8,12,20,.94)" : "transparent", backdropFilter: solid ? "blur(24px)" : "none", WebkitBackdropFilter: solid ? "blur(24px)" : "none", borderBottom: `1px solid ${solid ? BORDER : "transparent"}`, transition: "all .3s ease" }}>
-    <div style={{ width: "min(1200px,94vw)", marginInline: "auto", display: "flex", alignItems: "center", justifyContent: "space-between", padding: sc ? ".8rem 0" : "1.1rem 0", transition: "padding .3s" }}>
-      <button onClick={() => nav("hero")} aria-label={SITE.company + " — back to top"} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "left" }}>
+    <div className="wrap" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: sc ? ".8rem 0" : "1.1rem 0", transition: "padding .3s" }}>
+      <button onClick={() => nav("hero")} aria-label={SITE.company + " — back to top"} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "left", flexShrink: 0, whiteSpace: "nowrap" }}>
         <div style={{ fontWeight: 900, fontSize: "clamp(.88rem,2.6vw,1.05rem)", letterSpacing: "-.03em", color: WHITE, lineHeight: 1.1 }}><span style={{ color: BLUE }}>SOUTH TEXAS</span> CONSTRUCTION</div>
-        <div style={{ fontSize: ".56rem", fontWeight: 700, letterSpacing: ".22em", color: MUTED, textTransform: "uppercase", marginTop: 4 }}><span style={{ color: WHITE }}>By Design</span> · Healthcare · Commercial · Roofing</div>
+        <div style={{ fontSize: ".62rem", fontWeight: 700, letterSpacing: ".15em", color: MUTED, textTransform: "uppercase", marginTop: 4 }}><span style={{ color: WHITE }}>By Design</span><span className="nav-extra"> · Healthcare · Commercial · Roofing</span></div>
       </button>
-      <div className="desk" style={{ display: "flex", alignItems: "center", gap: ".1rem" }}>
+      <div className="desk" style={{ display: "flex", alignItems: "center", gap: ".1rem", flexShrink: 0 }}>
         {NLINKS.map((l) => <NL key={l.id} label={l.label} onClick={() => nav(l.id)} />)}
-        <Btn onClick={() => nav("contact")} sx={{ marginLeft: "1.25rem", padding: ".55rem 1.25rem", fontSize: ".82rem" }}>Get an Estimate</Btn>
+        <Btn onClick={() => nav("contact")} sx={{ marginLeft: "1rem", padding: ".6rem 1.3rem", fontSize: ".88rem", whiteSpace: "nowrap" }}>Get an Estimate</Btn>
       </div>
       <button className="mob" onClick={() => setOpen((o) => !o)} aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open} style={{ display: "none", flexDirection: "column", gap: 5, padding: 10, background: "none", border: "none", cursor: "pointer" }}>
         {[0, 1, 2].map((i) => <span key={i} style={{ display: "block", width: 22, height: 2, background: WHITE, borderRadius: 1, transition: "all .25s", transform: open ? (i === 0 ? "translateY(7px) rotate(45deg)" : i === 2 ? "translateY(-7px) rotate(-45deg)" : "none") : "none", opacity: open && i === 1 ? 0 : 1 }} />)}
@@ -151,16 +152,16 @@ function Nav() {
     </div>
     {open && <div style={{ background: SRF, borderTop: `1px solid ${BORDER}`, animation: "dn .2s ease" }}>
       {NLINKS.map((l) => <ML key={l.id} label={l.label} onClick={() => nav(l.id)} />)}
-      <button onClick={() => nav("contact")} style={{ display: "block", width: "100%", textAlign: "left", padding: "1rem 6vw", fontSize: ".95rem", fontWeight: 700, color: BLUEHI, background: "none", border: "none", cursor: "pointer" }}>Get an Estimate →</button>
+      <button onClick={() => nav("contact")} style={{ display: "block", width: "100%", textAlign: "left", padding: "1rem 6vw", fontSize: "1rem", fontWeight: 700, color: BLUEHI, background: "none", border: "none", cursor: "pointer" }}>Get an Estimate →</button>
     </div>}
   </nav>;
 }
 function NL({ label, onClick }) {
   const [h, s] = useState(false);
-  return <button onClick={onClick} style={{ background: "none", border: "none", padding: ".5rem .75rem", cursor: "pointer", fontSize: ".86rem", fontWeight: 500, color: h ? WHITE : MID, transition: "color .2s" }} onMouseEnter={() => s(true)} onMouseLeave={() => s(false)}>{label}</button>;
+  return <button onClick={onClick} style={{ background: "none", border: "none", padding: ".5rem .6rem", cursor: "pointer", whiteSpace: "nowrap", fontSize: ".86rem", fontWeight: 500, color: h ? WHITE : MID, transition: "color .2s" }} onMouseEnter={() => s(true)} onMouseLeave={() => s(false)}>{label}</button>;
 }
 function ML({ label, onClick }) {
-  return <button onClick={onClick} style={{ display: "block", width: "100%", textAlign: "left", padding: "1rem 6vw", fontSize: ".95rem", fontWeight: 500, color: WHITE, background: "none", border: "none", borderBottom: `1px solid ${BORDER}`, cursor: "pointer" }}>{label}</button>;
+  return <button onClick={onClick} style={{ display: "block", width: "100%", textAlign: "left", padding: "1rem 6vw", fontSize: "1rem", fontWeight: 500, color: WHITE, background: "none", border: "none", borderBottom: `1px solid ${BORDER}`, cursor: "pointer" }}>{label}</button>;
 }
 
 /* ── Hero ── */
@@ -177,26 +178,51 @@ function Hero() {
       <div style={{ position: "absolute", bottom: -80, right: -80, width: 500, height: 500, borderRadius: "50%", background: "radial-gradient(circle,rgba(245,158,11,.07) 0%,transparent 70%)" }} />
       <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,.014) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.014) 1px,transparent 1px)", backgroundSize: "64px 64px" }} />
     </div>
-    <div style={{ position: "relative", zIndex: 1, width: "min(1200px,94vw)", marginInline: "auto", padding: "3rem 0 7rem" }}>
+    <div className="wrap hero-g" style={{ position: "relative", zIndex: 1, padding: "3rem 0 5rem" }}>
+      <div>
       <div style={{ opacity: on ? 1 : 0, transform: on ? "none" : "translateY(12px)", transition: tr(0.05), marginBottom: "2rem" }}>
         <span style={{ display: "inline-flex", alignItems: "center", gap: ".5rem", background: BLUELO, border: "1px solid rgba(59,130,246,.22)", borderRadius: 100, padding: ".35rem .9rem .35rem .5rem" }}>
           <span style={{ background: BLUE, borderRadius: "50%", width: 6, height: 6, display: "inline-block" }} />
-          <span style={{ fontSize: ".68rem", fontWeight: 600, letterSpacing: ".12em", textTransform: "uppercase", color: BLUEHI }}>Texas Statewide — Established {SITE.founded}</span>
+          <span style={{ fontSize: ".74rem", fontWeight: 600, letterSpacing: ".12em", textTransform: "uppercase", color: BLUEHI }}>Texas Statewide — Established {SITE.founded}</span>
         </span>
       </div>
-      <h1 style={{ fontWeight: 900, fontSize: "clamp(3rem,9vw,7rem)", lineHeight: 0.94, letterSpacing: "-.04em", marginBottom: "2rem", opacity: on ? 1 : 0, transform: on ? "none" : "translateY(20px)", transition: tr(0.12) }}>
+      <h1 className="hero-h1" style={{ fontWeight: 900, lineHeight: 0.94, letterSpacing: "-.04em", marginBottom: "2rem", opacity: on ? 1 : 0, transform: on ? "none" : "translateY(20px)", transition: tr(0.12) }}>
         <span style={{ display: "block", color: WHITE }}>Built for Healthcare.</span>
         <span style={{ display: "block", background: "linear-gradient(110deg,#3B82F6 0%,#60A5FA 45%,#F59E0B 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Trusted Across Texas.</span>
       </h1>
-      <p style={{ fontSize: "clamp(1rem,1.8vw,1.15rem)", color: MID, maxWidth: "50ch", lineHeight: 1.75, marginBottom: "2.75rem", opacity: on ? 1 : 0, transition: tr(0.22) }}>
+      <p style={{ fontSize: "clamp(1.05rem,1.6vw,1.25rem)", color: MID, maxWidth: "56ch", lineHeight: 1.75, marginBottom: "2.75rem", opacity: on ? 1 : 0, transition: tr(0.22) }}>
         The Contractor that nursing homes, assisted living facilities, and commercial properties rely on: phased renovations in occupied buildings, full project management, and our own roofing crews, anywhere in Texas.
       </p>
       <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap", opacity: on ? 1 : 0, transition: tr(0.3) }}>
-        <Btn onClick={() => go("contact")} sx={{ padding: ".95rem 2.25rem", fontSize: ".98rem", fontWeight: 700 }}>Request an Estimate</Btn>
-        <Btn href={telHref} v="out" sx={{ padding: ".95rem 1.75rem", fontSize: ".98rem" }}>Call {SITE.phone}</Btn>
+        <Btn onClick={() => go("contact")} sx={{ padding: ".95rem 2.25rem", fontSize: "1.05rem", fontWeight: 700 }}>Request an Estimate</Btn>
+        <Btn href={telHref} v="out" sx={{ padding: ".95rem 1.75rem", fontSize: "1.05rem" }}>Call {SITE.phone}</Btn>
+      </div>
+      </div>
+      <div className="hero-side" style={{ opacity: on ? 1 : 0, transform: on ? "none" : "translateY(20px)", transition: tr(0.35) }}>
+        <figure className="hero-photo" style={{ margin: 0, position: "relative", borderRadius: 18, overflow: "hidden", border: `1px solid ${BORDER}`, background: RAISED, boxShadow: "0 30px 80px rgba(0,0,0,.55)" }}>
+          <img src={photo(PHOTOS.heroSide)} alt="Our crew replacing a window in an occupied room, furniture wrapped and protected" loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={hideBrokenImg} />
+          <figcaption style={{ position: "absolute", left: "1rem", bottom: "1rem", background: "rgba(8,12,20,.85)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,.1)", borderRadius: 8, padding: ".45rem .8rem", fontSize: ".85rem", color: MID }}>Window replacement in an occupied room</figcaption>
+        </figure>
+        <dl className="hero-facts">
+          {heroFacts().map((f) => <div key={f.label} style={{ background: "rgba(13,19,33,.82)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: `1px solid ${BORDER}`, borderRadius: 12, padding: "1rem 1.1rem" }}>
+            <dt style={{ fontSize: ".72rem", letterSpacing: ".14em", textTransform: "uppercase", color: MID, fontWeight: 600, marginBottom: ".3rem" }}>{f.label}</dt>
+            <dd style={{ fontWeight: 900, fontSize: "1.5rem", letterSpacing: "-.03em", color: WHITE, lineHeight: 1.1 }}>{f.value}</dd>
+          </div>)}
+        </dl>
       </div>
     </div>
   </section>;
+}
+
+// Quick facts beside the headline. Only things that are true.
+function heroFacts() {
+  const yrs = new Date().getFullYear() - SITE.founded;
+  return [
+    { label: "Established", value: String(SITE.founded) },
+    { label: "Years in Texas", value: yrs + "+" },
+    { label: "Service Area", value: "All of Texas" },
+    { label: "Roofing", value: "In-House Crews" },
+  ];
 }
 
 /* ── Cert strip ── */
@@ -205,7 +231,7 @@ function CertStrip() {
     <Divider />
     <div style={{ background: SRF, padding: ".9rem 0" }}>
       <div className="ci wrap">
-        {[...CREDENTIALS, ...FOCUS].map((c, i) => <div key={i} style={{ display: "flex", alignItems: "center", gap: ".45rem", fontSize: ".7rem", fontWeight: 600, letterSpacing: ".1em", textTransform: "uppercase", color: MID, whiteSpace: "nowrap" }}>
+        {[...CREDENTIALS, ...FOCUS].map((c, i) => <div key={i} style={{ display: "flex", alignItems: "center", gap: ".45rem", fontWeight: 600, letterSpacing: ".1em", textTransform: "uppercase", color: MID }} className="ci-item">
           <Check size={10} sw={3} />{c}
         </div>)}
       </div>
@@ -216,12 +242,16 @@ function CertStrip() {
 
 /* ── Services ── */
 function Services() {
-  return <section id="services" style={{ background: BG, padding: "clamp(4.5rem,9vw,8rem) 0" }}>
+  return <section id="services" style={{ background: BG, padding: "clamp(4rem,7vw,6.5rem) 0" }}>
     <div className="wrap">
-      <Rv>
-        <Eyebrow>Healthcare and Commercial</Eyebrow>
-        <SH sx={{ marginBottom: ".75rem" }}>Remodeling Services</SH>
-        <p style={{ color: MID, fontSize: "1rem", maxWidth: "54ch", lineHeight: 1.8, marginBottom: "3rem" }}>Phased renovations in occupied buildings and full commercial build-outs — done to code and on schedule.</p>
+      <Rv sx={{ marginBottom: "3rem" }}>
+        <div className="shead">
+          <div>
+            <Eyebrow>Healthcare and Commercial</Eyebrow>
+            <SH>Remodeling Services</SH>
+          </div>
+          <p style={{ color: MID, fontSize: "1.05rem", maxWidth: "52ch", lineHeight: 1.8 }}>Phased renovations in occupied buildings and full commercial build-outs — done to code and on schedule.</p>
+        </div>
       </Rv>
       <div className="sg">{SERVICES.map((s, i) => <SvcCard key={s.title} s={s} d={i * 0.06} />)}</div>
     </div>
@@ -239,7 +269,7 @@ function SvcCard({ s, d }) {
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg,#3B82F6,#F59E0B)", opacity: hov ? 1 : 0.35, transition: "opacity .25s" }} />
       {s.tag && <div style={{ marginBottom: ".85rem" }}><Tag v={tv}>{s.tag}</Tag></div>}
       <h3 style={{ fontWeight: 700, fontSize: "1.05rem", color: hov ? BLUEHI : WHITE, marginBottom: ".55rem", transition: "color .25s" }}>{s.title}</h3>
-      <p style={{ fontSize: ".92rem", color: MID, lineHeight: 1.7 }}>{s.desc}</p>
+      <p style={{ fontSize: "1rem", color: MID, lineHeight: 1.7 }}>{s.desc}</p>
     </div>
   </div>;
 }
@@ -247,12 +277,16 @@ function SvcCard({ s, d }) {
 /* ── Our Work (real job photos) ── */
 function Work() {
   const [open, setOpen] = useState(null);
-  return <section id="work" style={{ background: SRF, padding: "clamp(4.5rem,9vw,8rem) 0" }}>
+  return <section id="work" style={{ background: SRF, padding: "clamp(4rem,7vw,6.5rem) 0" }}>
     <div className="wrap">
-      <Rv>
-        <Eyebrow>Our Work</Eyebrow>
-        <SH sx={{ marginBottom: ".75rem" }}>Real Jobs. Our Crews.</SH>
-        <p style={{ color: MID, fontSize: "1rem", maxWidth: "54ch", lineHeight: 1.8, marginBottom: "2.5rem" }}>A look at recent projects. Tap any photo to see it bigger.</p>
+      <Rv sx={{ marginBottom: "2.75rem" }}>
+        <div className="shead">
+          <div>
+            <Eyebrow>Our Work</Eyebrow>
+            <SH>Real Jobs. Our Crews.</SH>
+          </div>
+          <p style={{ color: MID, fontSize: "1.05rem", maxWidth: "52ch", lineHeight: 1.8 }}>A look at recent projects. Tap any photo to see it bigger.</p>
+        </div>
       </Rv>
       <div className="gg">
         {GALLERY.map((g, i) => <Rv key={g.photo} d={(i % 3) * 0.06}>
@@ -311,7 +345,7 @@ function Lightbox({ index, setIndex }) {
     <button ref={closeRef} type="button" onClick={close} aria-label="Close photo" style={{ position: "fixed", top: "1rem", right: "1rem", width: 46, height: 46, borderRadius: "50%", border: "1px solid rgba(255,255,255,.18)", background: "rgba(13,19,33,.85)", color: WHITE, fontSize: "1.1rem", cursor: "pointer", zIndex: 2 }}>✕</button>
     <figure onClick={(e) => e.stopPropagation()} style={{ margin: 0, maxWidth: "min(1100px,100%)", textAlign: "center" }}>
       <img src={photo(g.photo)} alt={g.caption} style={{ maxWidth: "100%", maxHeight: "78vh", borderRadius: 10, margin: "0 auto", objectFit: "contain" }} />
-      <figcaption style={{ marginTop: "1rem", color: MID, fontSize: ".95rem", lineHeight: 1.5 }}>{g.caption} <span style={{ color: MUTED }}>· {index + 1} of {n}</span></figcaption>
+      <figcaption style={{ marginTop: "1rem", color: MID, fontSize: "1rem", lineHeight: 1.5 }}>{g.caption} <span style={{ color: MUTED }}>· {index + 1} of {n}</span></figcaption>
     </figure>
     <button type="button" className="lbnav" onClick={(e) => { e.stopPropagation(); prev(); }} aria-label="Previous photo" style={{ ...arrow, left: "1rem" }}>←</button>
     <button type="button" className="lbnav" onClick={(e) => { e.stopPropagation(); next(); }} aria-label="Next photo" style={{ ...arrow, right: "1rem" }}>→</button>
@@ -320,13 +354,13 @@ function Lightbox({ index, setIndex }) {
 
 /* ── Roofing ── */
 function Roofing() {
-  return <section id="roofing" style={{ background: BG, padding: "clamp(4.5rem,9vw,8rem) 0" }}>
+  return <section id="roofing" style={{ background: BG, padding: "clamp(4rem,7vw,6.5rem) 0" }}>
     <div className="wrap">
       <div className="sp">
         <Rv>
-          <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", height: "min(460px,90vw)", background: RAISED }}>
+          <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", height: "min(34rem,90vw)", background: RAISED }}>
             <img src={photo(PHOTOS.roofing)} alt="Our crew rebuilding the roof deck on a historic building" loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={hideBrokenImg} />
-            <div style={{ position: "absolute", left: "1rem", bottom: "1rem", background: "rgba(8,12,20,.85)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,.1)", borderRadius: 8, padding: ".45rem .8rem", fontSize: ".78rem", color: MID }}>Roof deck rebuild on a historic building</div>
+            <div style={{ position: "absolute", left: "1rem", bottom: "1rem", background: "rgba(8,12,20,.85)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,.1)", borderRadius: 8, padding: ".45rem .8rem", fontSize: ".85rem", color: MID }}>Roof deck rebuild on a historic building</div>
           </div>
         </Rv>
         <Rv d={0.1}>
@@ -334,14 +368,14 @@ function Roofing() {
           <SH sx={{ marginBottom: "1rem" }}>Our Own Roofing Crews</SH>
           <div style={{ display: "inline-flex", alignItems: "center", gap: ".6rem", background: "rgba(239,68,68,.08)", border: "1px solid rgba(239,68,68,.22)", borderRadius: 8, padding: ".55rem 1rem", marginBottom: "1.5rem" }}>
             <span aria-hidden="true">⚡</span>
-            <span style={{ fontSize: ".82rem", fontWeight: 700, color: "#FCA5A5" }}>Storm damage? Call <a href={telHref} style={{ color: "#FECACA", textDecoration: "underline" }}>{SITE.phone}</a></span>
+            <span style={{ fontSize: ".88rem", fontWeight: 700, color: "#FCA5A5" }}>Storm damage? Call <a href={telHref} style={{ color: "#FECACA", textDecoration: "underline" }}>{SITE.phone}</a></span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "1.1rem", marginBottom: "2rem" }}>
             {ROOF_SERVICES.map((s) => <div key={s.title} style={{ display: "flex", gap: ".85rem" }}>
               <span style={{ marginTop: 4 }}><Check /></span>
               <div>
                 <div style={{ fontWeight: 700, fontSize: "1rem", color: WHITE, marginBottom: ".2rem" }}>{s.title}</div>
-                <div style={{ fontSize: ".92rem", color: MID, lineHeight: 1.65 }}>{s.desc}</div>
+                <div style={{ fontSize: "1rem", color: MID, lineHeight: 1.65 }}>{s.desc}</div>
               </div>
             </div>)}
           </div>
@@ -354,32 +388,36 @@ function Roofing() {
 
 /* ── Project Management ── */
 function Management() {
-  return <section id="management" style={{ background: SRF, padding: "clamp(4.5rem,9vw,8rem) 0" }}>
+  return <section id="management" style={{ background: SRF, padding: "clamp(4rem,7vw,6.5rem) 0" }}>
     <div className="wrap">
-      <div className="sp" style={{ alignItems: "start" }}>
+      <div className="sp" style={{ alignItems: "center" }}>
         <Rv>
           <Eyebrow>Project Management</Eyebrow>
           <SH sx={{ marginBottom: "1.25rem" }}>{MANAGEMENT.heading}</SH>
           <p style={{ color: MID, fontSize: "1rem", lineHeight: 1.85, marginBottom: "2rem" }}>{MANAGEMENT.body}</p>
-          <div style={{ display: "flex", flexDirection: "column", gap: "1.1rem" }}>
+          <div className="mg-list">
             {MANAGEMENT.items.map((s) => <div key={s.title} style={{ display: "flex", gap: ".85rem" }}>
               <span style={{ marginTop: 4 }}><Check /></span>
               <div>
                 <div style={{ fontWeight: 700, fontSize: "1rem", color: WHITE, marginBottom: ".2rem" }}>{s.title}</div>
-                <div style={{ fontSize: ".92rem", color: MID, lineHeight: 1.65 }}>{s.desc}</div>
+                <div style={{ fontSize: "1rem", color: MID, lineHeight: 1.65 }}>{s.desc}</div>
               </div>
             </div>)}
           </div>
         </Rv>
         <Rv d={0.1}>
+          <figure style={{ margin: "0 0 1rem", position: "relative", borderRadius: 16, overflow: "hidden", height: "clamp(13rem, 22vw, 20rem)", background: RAISED, border: `1px solid ${BORDER}` }}>
+            <img src={photo(PHOTOS.management)} alt="Atrium wall and finish work from the scaffold" loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={hideBrokenImg} />
+            <figcaption style={{ position: "absolute", left: "1rem", bottom: "1rem", background: "rgba(8,12,20,.85)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,.1)", borderRadius: 8, padding: ".45rem .8rem", fontSize: ".85rem", color: MID }}>Atrium wall and finish work from the scaffold</figcaption>
+          </figure>
           <div style={{ background: RAISED, border: `1px solid ${BORDER}`, borderRadius: 16, padding: "clamp(1.5rem,4vw,2.25rem)" }}>
             <h3 style={{ fontWeight: 800, fontSize: "1.3rem", color: WHITE, letterSpacing: "-.02em", marginBottom: "1.5rem" }}>How You Can Hire Us</h3>
             <ol style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "1.25rem", marginBottom: "2rem" }}>
               {MANAGEMENT.ways.map((w, i) => <li key={w.title} style={{ display: "flex", gap: "1rem" }}>
-                <span aria-hidden="true" style={{ flex: "0 0 auto", width: 34, height: 34, borderRadius: "50%", background: BLUELO, border: `1px solid ${BAC}`, color: BLUEHI, fontWeight: 800, fontSize: ".9rem", display: "flex", alignItems: "center", justifyContent: "center" }}>{i + 1}</span>
+                <span aria-hidden="true" style={{ flex: "0 0 auto", width: 34, height: 34, borderRadius: "50%", background: BLUELO, border: `1px solid ${BAC}`, color: BLUEHI, fontWeight: 800, fontSize: ".96rem", display: "flex", alignItems: "center", justifyContent: "center" }}>{i + 1}</span>
                 <div>
                   <div style={{ fontWeight: 700, fontSize: "1rem", color: WHITE, marginBottom: ".2rem" }}>{w.title}</div>
-                  <div style={{ fontSize: ".92rem", color: MID, lineHeight: 1.65 }}>{w.desc}</div>
+                  <div style={{ fontSize: "1rem", color: MID, lineHeight: 1.65 }}>{w.desc}</div>
                 </div>
               </li>)}
             </ol>
@@ -394,7 +432,7 @@ function Management() {
 /* ── About ── */
 function About() {
   const yrs = new Date().getFullYear() - SITE.founded;
-  return <section id="about" style={{ background: BG, padding: "clamp(4.5rem,9vw,8rem) 0" }}>
+  return <section id="about" style={{ background: BG, padding: "clamp(4rem,7vw,6.5rem) 0" }}>
     <div className="wrap">
       <div className="sp sp-rev">
         <Rv d={0.12}>
@@ -402,18 +440,18 @@ function About() {
           <SH sx={{ marginBottom: "1.25rem" }}>{ABOUT.heading}</SH>
           <p style={{ color: MID, fontSize: "1rem", lineHeight: 1.85, marginBottom: "2rem" }}>{ABOUT.body}</p>
           <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: ".75rem", marginBottom: "2.5rem" }}>
-            {ABOUT.bullets.map((b) => <li key={b} style={{ display: "flex", alignItems: "flex-start", gap: ".75rem", fontSize: ".98rem", color: WHITE }}>
+            {ABOUT.bullets.map((b) => <li key={b} style={{ display: "flex", alignItems: "flex-start", gap: ".75rem", fontSize: "1.05rem", color: WHITE }}>
               <span style={{ marginTop: 3 }}><Check /></span>{b}
             </li>)}
           </ul>
           <Btn onClick={() => go("contact")}>Request an Estimate</Btn>
         </Rv>
         <Rv>
-          <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", height: "min(440px,70vw)", background: RAISED }}>
+          <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", height: "min(29rem,70vw)", background: RAISED }}>
             <img src={photo(PHOTOS.about)} alt="Our crew framing an outdoor pavilion" loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={hideBrokenImg} />
             {yrs > 0 && <div style={{ position: "absolute", bottom: "1.25rem", left: "1.25rem", background: "rgba(8,12,20,.88)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", border: "1px solid rgba(59,130,246,.28)", borderRadius: 12, padding: ".85rem 1.15rem" }}>
               <div style={{ fontWeight: 900, fontSize: "1.9rem", color: BLUE, lineHeight: 1, letterSpacing: "-.04em" }}>{yrs}+</div>
-              <div style={{ fontSize: ".62rem", letterSpacing: ".16em", textTransform: "uppercase", color: MID, marginTop: ".2rem", fontWeight: 600 }}>Years in Texas</div>
+              <div style={{ fontSize: ".68rem", letterSpacing: ".16em", textTransform: "uppercase", color: MID, marginTop: ".2rem", fontWeight: 600 }}>Years in Texas</div>
             </div>}
           </div>
         </Rv>
@@ -425,14 +463,24 @@ function About() {
 /* ── FAQ ── */
 function FAQ() {
   const [open, setOpen] = useState(null);
-  return <section id="faq" style={{ background: SRF, padding: "clamp(5rem,10vw,9rem) 0" }}>
-    <div className="wrap">
-      <Rv sx={{ marginBottom: "3.5rem" }}>
-        <Eyebrow>Common Questions</Eyebrow>
-        <SH sx={{ marginBottom: ".75rem" }}>Frequently Asked Questions</SH>
-        <p style={{ color: MID, fontSize: "1rem", maxWidth: "50ch", lineHeight: 1.8 }}>What facility administrators usually ask before they call.</p>
+  return <section id="faq" style={{ background: SRF, padding: "clamp(4.5rem,8vw,7rem) 0" }}>
+    <div className="wrap faqg">
+      <Rv sx={{ height: "100%" }}>
+        <div className="faq-side">
+          <Eyebrow>Common Questions</Eyebrow>
+          <SH sx={{ marginBottom: ".9rem" }}>Frequently Asked Questions</SH>
+          <p style={{ color: MID, fontSize: "1.05rem", maxWidth: "44ch", lineHeight: 1.8, marginBottom: "2rem" }}>What facility administrators usually ask before they call.</p>
+          <div className="faq-cta">
+            <Btn onClick={() => go("contact")}>Still Have Questions? Contact Us</Btn>
+            <div style={{ marginTop: "2rem", background: RAISED, border: `1px solid ${BORDER}`, borderRadius: 14, padding: "1.4rem 1.5rem", maxWidth: "26rem" }}>
+              <div style={{ fontSize: ".72rem", letterSpacing: ".14em", textTransform: "uppercase", color: MID, fontWeight: 600, marginBottom: ".4rem" }}>Rather Talk It Through?</div>
+              <a href={telHref} style={{ display: "block", fontWeight: 800, fontSize: "1.5rem", letterSpacing: "-.02em", color: WHITE, marginBottom: ".35rem" }}>{SITE.phone}</a>
+              <p style={{ fontSize: ".95rem", color: MID, lineHeight: 1.6 }}>Call and we'll walk through your project, your schedule, and any survey dates.</p>
+            </div>
+          </div>
+        </div>
       </Rv>
-      <div style={{ display: "flex", flexDirection: "column", gap: ".75rem", maxWidth: 820 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: ".75rem" }}>
         {FAQS.map((faq, i) => {
           const isOpen = open === i;
           return <Rv key={i} d={i * 0.05}>
@@ -442,14 +490,14 @@ function FAQ() {
                 <span aria-hidden="true" style={{ color: BLUE, fontSize: "1.3rem", flexShrink: 0, transition: "transform .25s", transform: isOpen ? "rotate(45deg)" : "none", display: "inline-block" }}>+</span>
               </button>
               {isOpen && <div id={"faq-" + i} style={{ padding: "0 1.5rem 1.35rem", animation: "dn .2s ease" }}>
-                <p style={{ fontSize: ".95rem", color: MID, lineHeight: 1.8 }}>{faq.a}</p>
+                <p style={{ fontSize: "1rem", color: MID, lineHeight: 1.8 }}>{faq.a}</p>
               </div>}
             </div>
           </Rv>;
         })}
       </div>
-      <Rv d={0.1} sx={{ marginTop: "3rem" }}>
-        <Btn onClick={() => go("contact")}>Still Have Questions? Contact Us</Btn>
+      <Rv d={0.1} sx={{ marginTop: "1rem" }}>
+        <div className="faq-cta-mob"><Btn onClick={() => go("contact")}>Still Have Questions? Contact Us</Btn></div>
       </Rv>
     </div>
   </section>;
@@ -514,7 +562,7 @@ function Contact({ addToast }) {
     "Name: " + form.firstName + " " + form.lastName + "\nEmail: " + form.email + "\nPhone: " + (form.phone || "Not given") + "\nProject: " + form.projectType + "\n\n" + form.message
   );
 
-  return <section id="contact" style={{ background: BG, padding: "clamp(5rem,10vw,9rem) 0" }}>
+  return <section id="contact" style={{ background: BG, padding: "clamp(4.5rem,8vw,7rem) 0" }}>
     <div className="wrap ctg">
       <Rv>
         <Eyebrow>Get In Touch</Eyebrow>
@@ -526,15 +574,15 @@ function Contact({ addToast }) {
             { label: "Email", val: SITE.email, href: mailHref, icon: "✉" },
             { label: "Service Area", val: SITE.serviceArea, href: null, icon: "📍" },
           ].map((r) => <div key={r.label} style={{ display: "flex", alignItems: "flex-start", gap: ".9rem" }}>
-            <div aria-hidden="true" style={{ width: 40, height: 40, borderRadius: 10, background: BLUELO, border: "1px solid rgba(59,130,246,.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".9rem", flexShrink: 0 }}>{r.icon}</div>
+            <div aria-hidden="true" style={{ width: 40, height: 40, borderRadius: 10, background: BLUELO, border: "1px solid rgba(59,130,246,.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".96rem", flexShrink: 0 }}>{r.icon}</div>
             <div>
-              <div style={{ fontSize: ".64rem", letterSpacing: ".14em", textTransform: "uppercase", color: MUTED, marginBottom: ".2rem", fontWeight: 600 }}>{r.label}</div>
+              <div style={{ fontSize: ".7rem", letterSpacing: ".14em", textTransform: "uppercase", color: MUTED, marginBottom: ".2rem", fontWeight: 600 }}>{r.label}</div>
               {r.href ? <a href={r.href} style={{ fontSize: "1rem", color: WHITE, fontWeight: 500 }}>{r.val}</a> : <span style={{ fontSize: "1rem", color: WHITE, fontWeight: 500 }}>{r.val}</span>}
             </div>
           </div>)}
         </div>
         <div style={{ background: BLUELO, border: "1px solid rgba(59,130,246,.2)", borderLeft: "3px solid #3B82F6", borderRadius: 10, padding: "1.1rem 1.35rem" }}>
-          <p style={{ fontSize: ".88rem", color: MID, lineHeight: 1.75 }}><strong style={{ color: WHITE, fontWeight: 600 }}>Healthcare projects:</strong> We understand Texas Health and Human Services Commission survey timelines. Call us first for pre-survey remediation.</p>
+          <p style={{ fontSize: ".94rem", color: MID, lineHeight: 1.75 }}><strong style={{ color: WHITE, fontWeight: 600 }}>Healthcare projects:</strong> We understand Texas Health and Human Services Commission survey timelines. Call us first for pre-survey remediation.</p>
         </div>
       </Rv>
 
@@ -583,7 +631,7 @@ function Contact({ addToast }) {
             <Btn type="submit" disabled={status === "sending"} sx={{ width: "100%", padding: "1rem", marginTop: ".25rem", fontWeight: 700, fontSize: "1rem" }}>
               {status === "sending" ? <><span aria-hidden="true" style={{ width: 16, height: 16, border: "2px solid rgba(8,12,20,.35)", borderTopColor: BG, borderRadius: "50%", animation: "spin .7s linear infinite", display: "inline-block" }} />Sending…</> : "Send Inquiry"}
             </Btn>
-            <p style={{ fontSize: ".75rem", color: MUTED, marginTop: ".85rem", textAlign: "center" }}>{SITE.responseNote}</p>
+            <p style={{ fontSize: ".82rem", color: MUTED, marginTop: ".85rem", textAlign: "center" }}>{SITE.responseNote}</p>
           </form>}
         </div>
       </Rv>
@@ -592,14 +640,14 @@ function Contact({ addToast }) {
 }
 
 function FieldLabel({ id, label, optional }) {
-  return <label htmlFor={"fi-" + id} style={{ display: "block", fontSize: ".72rem", fontWeight: 600, letterSpacing: ".1em", textTransform: "uppercase", color: MID, marginBottom: ".4rem" }}>
+  return <label htmlFor={"fi-" + id} style={{ display: "block", fontSize: ".78rem", fontWeight: 600, letterSpacing: ".1em", textTransform: "uppercase", color: MID, marginBottom: ".4rem" }}>
     {label}{optional ? <span style={{ color: MUTED, textTransform: "none", letterSpacing: 0, fontWeight: 400 }}> (optional)</span> : <span style={{ color: BLUEHI }} aria-hidden="true"> *</span>}
   </label>;
 }
 
 function FieldError({ id, errors }) {
   if (!errors[id]) return null;
-  return <p id={"er-" + id} role="alert" style={{ fontSize: ".8rem", color: "#FCA5A5", marginTop: ".35rem", fontWeight: 500 }}>{errors[id]}</p>;
+  return <p id={"er-" + id} role="alert" style={{ fontSize: ".86rem", color: "#FCA5A5", marginTop: ".35rem", fontWeight: 500 }}>{errors[id]}</p>;
 }
 
 function Field({ id, label, type = "text", auto, ph, optional, form, errors, change, blur }) {
@@ -637,23 +685,23 @@ function Footer() {
       <div className="fg">
         <div>
           <div style={{ fontWeight: 900, fontSize: "1.15rem", letterSpacing: "-.03em", color: WHITE, lineHeight: 1.15, marginBottom: ".75rem" }}><span style={{ color: BLUE }}>SOUTH TEXAS</span> CONSTRUCTION<br />BY DESIGN</div>
-          <p style={{ fontSize: ".86rem", color: MID, lineHeight: 1.75, maxWidth: "28ch", marginBottom: "1rem" }}>{SITE.tagline} Healthcare, commercial, and roofing across Texas.</p>
-          <p style={{ fontSize: ".86rem", lineHeight: 1.9 }}>
+          <p style={{ fontSize: ".92rem", color: MID, lineHeight: 1.75, maxWidth: "28ch", marginBottom: "1rem" }}>{SITE.tagline} Healthcare, commercial, and roofing across Texas.</p>
+          <p style={{ fontSize: ".92rem", lineHeight: 1.9 }}>
             <a href={telHref} style={{ color: WHITE }}>{SITE.phone}</a><br />
             <a href={mailHref} style={{ color: WHITE }}>{SITE.email}</a>
           </p>
         </div>
         {Object.entries(cols).map(([heading, links]) => <div key={heading}>
-          <h4 style={{ fontSize: ".7rem", letterSpacing: ".18em", textTransform: "uppercase", color: MUTED, marginBottom: "1rem", fontWeight: 600 }}>{heading}</h4>
+          <h4 style={{ fontSize: ".78rem", letterSpacing: ".18em", textTransform: "uppercase", color: MUTED, marginBottom: "1rem", fontWeight: 600 }}>{heading}</h4>
           <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: ".55rem" }}>
-            {links.map(([lbl, id]) => <li key={lbl}><button onClick={() => go(id)} style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontSize: ".86rem", color: MID, textAlign: "left" }}>{lbl}</button></li>)}
+            {links.map(([lbl, id]) => <li key={lbl}><button onClick={() => go(id)} style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontSize: ".92rem", color: MID, textAlign: "left" }}>{lbl}</button></li>)}
           </ul>
         </div>)}
       </div>
       <Divider />
       <div style={{ paddingTop: "1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: ".5rem" }}>
-        <p style={{ fontSize: ".76rem", color: MUTED }}>© {yr} {SITE.company}. All rights reserved.</p>
-        <p style={{ fontSize: ".74rem", color: FAINT }}>Established {SITE.founded}{CREDENTIALS.length ? " · " + CREDENTIALS.join(" · ") : ""}</p>
+        <p style={{ fontSize: ".82rem", color: MUTED }}>© {yr} {SITE.company}. All rights reserved.</p>
+        <p style={{ fontSize: ".8rem", color: FAINT }}>Established {SITE.founded}{CREDENTIALS.length ? " · " + CREDENTIALS.join(" · ") : ""}</p>
       </div>
     </div>
   </footer>;

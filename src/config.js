@@ -24,6 +24,8 @@ export const FOCUS = ["Healthcare Renovation", "Commercial Construction", "Proje
 // Photos live in public/photos/. Each has a full size (name.webp) and a small one (name-sm.webp).
 export const PHOTOS = {
   hero: "atrium-scaffold",
+  heroSide: "window-replacement",
+  management: "atrium-interior",
   about: "pavilion",
   roofing: "historic-roof",
 };
