@@ -4,7 +4,6 @@ export const PROJECT_TYPES = [
   "Nursing Home or Skilled Nursing Facility Remodel",
   "Assisted Living Facility",
   "Americans with Disabilities Act Bathroom Upgrades",
-  "Nurse Station or Clinical Space",
   "Dining and Common Area",
   "Office Build-Out",
   "Retail or Restaurant",

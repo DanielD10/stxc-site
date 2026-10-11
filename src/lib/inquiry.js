@@ -12,12 +12,12 @@ export const EMPTY_FORM = {
 
 // Same rules the server uses. Server is the real gatekeeper; this is for instant feedback.
 export const RULES = {
-  firstName: (v) => (v.trim().length >= 2 ? "" : "First name required."),
-  lastName: (v) => (v.trim().length >= 2 ? "" : "Last name required."),
+  firstName: (v) => (v.trim().length >= 2 ? "" : "First name is required."),
+  lastName: (v) => (v.trim().length >= 2 ? "" : "Last name is required."),
   email: (v) => (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) ? "" : "Enter a valid email."),
   phone: (v) => (!v.trim() || (/^[\d\s()+.\-]{7,30}$/.test(v.trim()) && v.replace(/\D/g, "").length >= 7) ? "" : "Enter a valid phone number."),
   projectType: (v) => (PROJECT_TYPES.includes(v) ? "" : "Pick a project type."),
-  message: (v) => (v.trim().length >= 10 ? "" : "Tell us a little about the project (10+ characters)."),
+  message: (v) => (v.trim().length >= 10 ? "" : "Tell us a little about the project (at least 10 characters)."),
 };
 
 export function validateForm(form) {

@@ -189,7 +189,7 @@ function Hero() {
         <span style={{ display: "block", background: "linear-gradient(110deg,#3B82F6 0%,#60A5FA 45%,#F59E0B 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Trusted Across Texas.</span>
       </h1>
       <p style={{ fontSize: "clamp(1rem,1.8vw,1.15rem)", color: MID, maxWidth: "50ch", lineHeight: 1.75, marginBottom: "2.75rem", opacity: on ? 1 : 0, transition: tr(0.22) }}>
-        The Contractor nursing homes, assisted living facilities, and commercial properties rely on — phased renovations in occupied buildings, full project management, and our own roofing crews, anywhere in Texas.
+        The Contractor that nursing homes, assisted living facilities, and commercial properties rely on: phased renovations in occupied buildings, full project management, and our own roofing crews, anywhere in Texas.
       </p>
       <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap", opacity: on ? 1 : 0, transition: tr(0.3) }}>
         <Btn onClick={() => go("contact")} sx={{ padding: ".95rem 2.25rem", fontSize: ".98rem", fontWeight: 700 }}>Request an Estimate</Btn>
@@ -511,7 +511,7 @@ function Contact({ addToast }) {
   const reset = () => { setForm(EMPTY_FORM); setErrors({}); setTouched({}); setStatus("idle"); startedAt.current = Date.now(); };
 
   const fallbackMail = mailHref + "?subject=" + encodeURIComponent("Project inquiry from " + (form.firstName + " " + form.lastName).trim()) + "&body=" + encodeURIComponent(
-    "Name: " + form.firstName + " " + form.lastName + "\nEmail: " + form.email + "\nPhone: " + (form.phone || "N/A") + "\nProject: " + form.projectType + "\n\n" + form.message
+    "Name: " + form.firstName + " " + form.lastName + "\nEmail: " + form.email + "\nPhone: " + (form.phone || "Not given") + "\nProject: " + form.projectType + "\n\n" + form.message
   );
 
   return <section id="contact" style={{ background: BG, padding: "clamp(5rem,10vw,9rem) 0" }}>
@@ -579,7 +579,7 @@ function Contact({ addToast }) {
               </select>
               <FieldError id="projectType" errors={errors} />
             </div>
-            <Field id="message" label="Project Details" type="textarea" ph="Tell us about your facility, the scope, and any upcoming survey dates..." form={form} errors={errors} change={change} blur={blur} />
+            <Field id="message" label="Project Details" type="textarea" ph="Tell us about your facility, the scope, and any upcoming survey dates." form={form} errors={errors} change={change} blur={blur} />
             <Btn type="submit" disabled={status === "sending"} sx={{ width: "100%", padding: "1rem", marginTop: ".25rem", fontWeight: 700, fontSize: "1rem" }}>
               {status === "sending" ? <><span aria-hidden="true" style={{ width: 16, height: 16, border: "2px solid rgba(8,12,20,.35)", borderTopColor: BG, borderRadius: "50%", animation: "spin .7s linear infinite", display: "inline-block" }} />Sending…</> : "Send Inquiry"}
             </Btn>
@@ -628,7 +628,7 @@ function Field({ id, label, type = "text", auto, ph, optional, form, errors, cha
 function Footer() {
   const yr = new Date().getFullYear();
   const cols = {
-    Healthcare: [["Nursing Home Remodels", "services"], ["Assisted Living Renovations", "services"], ["Americans with Disabilities Act Upgrades", "services"], ["Clinical Spaces", "services"], ["New Construction", "services"]],
+    Healthcare: [["Nursing Home Remodels", "services"], ["Assisted Living Renovations", "services"], ["Americans with Disabilities Act Upgrades", "services"], ["New Construction", "services"]],
     Roofing: [["Commercial Re-Roofing", "roofing"], ["Healthcare Roofing", "roofing"], ["Storm and Emergency", "roofing"], ["Residential Roofing", "roofing"]],
     Company: [["Our Work", "work"], ["Project Management", "management"], ["About", "about"], ["Frequently Asked Questions", "faq"], ["Contact", "contact"]],
   };

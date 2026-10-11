@@ -42,12 +42,11 @@ export const GALLERY = [
 
 export const SERVICES = [
   { title: "Resident Room Renovations", tag: "Most Requested", desc: "Flooring, walls, windows, lighting, and accessibility upgrades done in phases, so residents stay in place." },
-  { title: "Assisted Living Facility Renovations", tag: null, desc: "Resident apartments, hallways, and shared spaces renovated in phases while the community stays open." },
-  { title: "Americans with Disabilities Act Bathroom Upgrades", tag: "Code Critical", desc: "Roll-in showers, grab bars, comfort-height fixtures, and slip-resistant floors built to Americans with Disabilities Act and Texas Health and Human Services Commission standards." },
-  { title: "Dining and Common Areas", tag: null, desc: "Dining rooms and activity spaces rebuilt with new drywall, lighting, and finishes." },
-  { title: "Commercial Build-Outs", tag: null, desc: "Offices, retail, medical clinics, and restaurants — tenant improvements and finish-outs." },
-  { title: "Nurse Stations and Clinical Spaces", tag: "Specialized", desc: "Nursing stations, medication rooms, and clinical support spaces built for staff workflow and patient safety." },
-  { title: "New Commercial Construction", tag: null, desc: "Ground-up commercial buildings — site work, concrete, framing, and finish-out." },
+  { title: "Assisted Living Facility Renovations", tag: "Specialized", desc: "Resident apartments, hallways, and shared spaces renovated in phases while the community stays open." },
+  { title: "Americans with Disabilities Act Bathroom Upgrades", tag: "Code Critical", desc: "Roll-in showers, grab bars, comfort-height fixtures, and slip-resistant floors built to the Americans with Disabilities Act Standards and the Texas Accessibility Standards." },
+  { title: "Dining and Common Areas", tag: "Specialized", desc: "Dining rooms and activity spaces rebuilt with new drywall, lighting, and finishes." },
+  { title: "Commercial Build-Outs", tag: "Specialized", desc: "Offices, retail, medical clinics, and restaurants — tenant improvements and finish-outs." },
+  { title: "New Commercial Construction", tag: "Specialized", desc: "Ground-up commercial buildings — site work, concrete, framing, and finish-out." },
 ];
 
 export const ROOF_SERVICES = [

@@ -30,14 +30,14 @@ export function validateContact(body) {
   };
 
   const fields = {};
-  if (data.firstName.length < 2) fields.firstName = "First name required.";
-  if (data.lastName.length < 2) fields.lastName = "Last name required.";
+  if (data.firstName.length < 2) fields.firstName = "First name is required.";
+  if (data.lastName.length < 2) fields.lastName = "Last name is required.";
   if (!EMAIL_RE.test(data.email)) fields.email = "Enter a valid email.";
   if (data.phone && (!PHONE_RE.test(data.phone) || data.phone.replace(/\D/g, "").length < 7)) {
     fields.phone = "Enter a valid phone number.";
   }
   if (!PROJECT_TYPES.includes(data.projectType)) fields.projectType = "Pick a project type.";
-  if (data.message.length < 10) fields.message = "Tell us a little about the project (10+ characters).";
+  if (data.message.length < 10) fields.message = "Tell us a little about the project (at least 10 characters).";
 
   return { data, fields };
 }
