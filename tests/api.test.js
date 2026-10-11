@@ -131,16 +131,16 @@ test("POST with no Origin header (scripts/curl) → 403", async () => {
 });
 
 test("ALLOWED_ORIGINS adds extra sites", async () => {
-  process.env.ALLOWED_ORIGINS = "https://southtxbydesign.com";
+  process.env.ALLOWED_ORIGINS = "https://southtexasconstructionbydesign.com";
   const r = res();
-  await contact(req({ origin: "https://southtxbydesign.com", body: goodBody() }), r);
+  await contact(req({ origin: "https://southtexasconstructionbydesign.com", body: goodBody() }), r);
   assert.equal(r.statusCode, 200);
 });
 
 test("custom domain works with no config (same-host rule)", async () => {
   const r = res();
-  const q = req({ origin: "https://www.southtxbydesign.com", body: goodBody() });
-  q.headers.host = "www.southtxbydesign.com";
+  const q = req({ origin: "https://www.southtexasconstructionbydesign.com", body: goodBody() });
+  q.headers.host = "www.southtexasconstructionbydesign.com";
   await contact(q, r);
   assert.equal(r.statusCode, 200);
 });
@@ -332,7 +332,7 @@ test("confirmation receipt only goes out with a verified sender", async () => {
   await contact(req({ body: goodBody() }), r);
   assert.equal(calls.length, 1); // test sender → no receipt
   _resetDuplicates();
-  process.env.FROM_EMAIL = "South Texas Construction By Design <website@southtxbydesign.com>";
+  process.env.FROM_EMAIL = "South Texas Construction By Design <website@southtexasconstructionbydesign.com>";
   mockResend([{ status: 200, json: { id: "a" } }]);
   r = res();
   await contact(req({ body: goodBody() }), r);

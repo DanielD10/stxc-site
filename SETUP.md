@@ -1,6 +1,6 @@
 # South Texas Construction By Design Website — Setup Guide
 
-Hosting: **Cloudflare (free)** · Domain: **southtxbydesign.com** (~$10.46/yr) · Email: **Resend (free)** · Code: **GitHub (private, free)**
+Hosting: **Cloudflare (free)** · Domain: **southtexasconstructionbydesign.com** (~$10.46/yr) · Email: **Resend (free)** · Code: **GitHub (private, free)**
 
 Leads from the form go to **jrduran75@yahoo.com**, and his phone gets a push alert.
 
@@ -55,7 +55,7 @@ Open **http://localhost:5173**. Send a test inquiry — the email prints in the 
 
 ### B1. Cloudflare account + domain (10 min)
 1. **cloudflare.com** → **Sign up** → verify email.
-2. Left menu → **Domain Registration** → **Register Domains** → search **southtxbydesign.com** → buy (~$10.46/yr, renews at the same price).
+2. Left menu → **Domain Registration** → **Register Domains** → search **southtexasconstructionbydesign.com** → buy (done — bought).
 
 ### B2. Deploy from GitHub (5 min)
 1. Left menu → **Compute (Workers)** → **Workers & Pages** → **Create** → **Import a repository**.
@@ -67,19 +67,27 @@ Open **http://localhost:5173**. Send a test inquiry — the email prints in the 
    - Leave root directory blank.
 4. **Deploy.** A minute or two later you get a link like `https://stxc-site.<your-name>.workers.dev`. The site is live there.
 
-### B3. Hook up southtxbydesign.com (2 min)
-1. Open the **stxc-site** Worker → **Settings** → **Domains & Routes** → **Add** → **Custom Domain** → `southtxbydesign.com` → **Add Custom Domain**.
-2. Repeat for `www.southtxbydesign.com`.
+### B3. Hook up southtexasconstructionbydesign.com (2 min)
+1. Open the **stxc-site** Worker → **Settings** → **Domains & Routes** → **Add** → **Custom Domain** → `southtexasconstructionbydesign.com` → **Add Custom Domain**.
+2. Repeat for `www.southtexasconstructionbydesign.com`.
 3. Cloudflare makes the DNS records and HTTPS certificate on its own. Give it a few minutes.
 
 The contact form works on every address automatically — no code change.
 
 ### B4. Email: verify the business domain (10 min)
-Resend only delivers to outside inboxes (like his Yahoo) after the domain is verified.
+Resend only delivers to outside inboxes (like his Yahoo) after the domain is verified. The domain is already added in Resend; add these records in **Cloudflare** → **southtexasconstructionbydesign.com** → **DNS** → **Records** → **Add record**. Set each one to **DNS only** (grey cloud).
 
-1. **Resend** → **Domains** → `southtxbydesign.com` shows a list of DNS records (TXT and MX).
-2. **Cloudflare** → **southtxbydesign.com** → **DNS** → **Records** → **Add record** for each one. Copy them **exactly**. Set each to **DNS only** (grey cloud).
-3. Back in Resend → **Verify**. Usually done in minutes.
+| Type | Name | Content | Priority |
+|---|---|---|---|
+| TXT | `resend._domainkey` | the long `p=MIGf...` value from Resend → Domains | |
+| MX | `send` | `feedback-smtp.us-east-1.amazonses.com` | 10 |
+| TXT | `send` | `v=spf1 include:amazonses.com ~all` | |
+| CNAME | `rsend` | `send.forge.rmta.net` | |
+| TXT | `_dmarc` | `v=DMARC1; p=none;` | |
+
+The last one (DMARC) isn't required by Resend, but Yahoo and Gmail trust mail more when it's there.
+
+Then Resend → **Domains** → **Verify**. Usually done in minutes.
 
 ### B5. Add the backend settings (5 min)
 Worker **stxc-site** → **Settings** → **Variables and Secrets** → **Add** → type **Secret** for each:
@@ -88,7 +96,7 @@ Worker **stxc-site** → **Settings** → **Variables and Secrets** → **Add** 
 |---|---|
 | `RESEND_API_KEY` | the `re_...` key |
 | `TO_EMAIL` | `jrduran75@yahoo.com` |
-| `FROM_EMAIL` | `South Texas Construction By Design <website@southtxbydesign.com>` |
+| `FROM_EMAIL` | `South Texas Construction By Design <website@southtexasconstructionbydesign.com>` |
 | `COMPANY_PHONE` | `(210) 367-6648` |
 | `SEND_CONFIRMATION` | `true` (customers get a "we got your message" email) |
 
@@ -97,7 +105,7 @@ Worker **stxc-site** → **Settings** → **Variables and Secrets** → **Add** 
 Then redeploy (Worker → **Deployments**), or just push any change.
 
 ### B6. Prove it works (2 min)
-1. Open **https://southtxbydesign.com/api/health** → `"email":"ready"` and `"sender":"custom verified domain"`.
+1. Open **https://southtexasconstructionbydesign.com/api/health** → `"email":"ready"` and `"sender":"custom verified domain"`.
 2. Fill out the form like a customer. Check his Yahoo — and **Spam** the first time. Mark it **Not Spam**.
 3. Hit **Reply** in that email → it goes straight to the customer.
 

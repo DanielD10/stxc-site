@@ -5,7 +5,7 @@ import worker from "../worker/index.js";
 import { _resetRateLimits } from "../api/_lib/middleware.js";
 import { _resetDuplicates } from "../api/_lib/validate.js";
 
-const SITE = "https://southtxbydesign.com";
+const SITE = "https://southtexasconstructionbydesign.com";
 let assetCalls, resend;
 
 const env = () => ({
