@@ -17,7 +17,7 @@ function health(req, res) {
     missingSettings: cfg.missing,
     sender: cfg.usingTestSender ? "Resend test sender (only delivers to your Resend account email)" : "custom verified domain",
     phoneAlerts: alertConfig().channels.length ? alertConfig().channels.join(" + ") : "off",
-    rateLimiting: upstash ? "shared (Upstash Redis)" : "per-instance (memory)",
+    rateLimiting: [req.hasEdgeLimiter && "Cloudflare rate limiter", upstash ? "shared (Upstash Redis)" : "per-instance (memory)"].filter(Boolean).join(" + "),
     time: new Date().toISOString(),
   });
 }

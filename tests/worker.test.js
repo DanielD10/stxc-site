@@ -19,7 +19,7 @@ beforeEach(() => {
   resend = [];
   _resetRateLimits();
   _resetDuplicates();
-  for (const k of ["EMAIL_DRY_RUN", "TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID", "NTFY_TOPIC", "FROM_EMAIL"]) delete process.env[k];
+  for (const k of ["EMAIL_DRY_RUN", "TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID", "NTFY_TOPIC", "FROM_EMAIL", "SEND_CONFIRMATION"]) delete process.env[k];
   globalThis.fetch = async (url, opts) => {
     resend.push({ url: String(url), body: JSON.parse(opts.body) });
     return { ok: true, status: 200, json: async () => ({ id: "e1" }), text: async () => "" };
@@ -87,4 +87,43 @@ test("worker: rate limit keys on Cloudflare's real visitor IP, not spoofable hea
     codes.push(r.status);
   }
   assert.deepEqual(codes, [200, 200, 200, 200, 200, 429]);
+});
+
+test("worker: a forged X-Forwarded-Host can't pass the same-site check", async () => {
+  const r = await worker.fetch(post(lead, { Origin: "https://evil.example", "X-Forwarded-Host": "evil.example" }), env());
+  assert.equal(r.status, 403);
+  assert.equal(resend.length, 0);
+});
+
+test("worker: Cloudflare rate limiter blocks, and only on the contact form", async () => {
+  const keys = [];
+  const e = { ...env(), CONTACT_LIMITER: { limit: async ({ key }) => { keys.push(key); return { success: false }; } } };
+  const r = await worker.fetch(post(lead), e);
+  assert.equal(r.status, 429);
+  assert.equal(resend.length, 0);
+  assert.equal(keys.length, 1);
+  assert.match(keys[0], /^rl:contact:/);
+  const h = await worker.fetch(new Request(SITE + "/api/health"), e);
+  assert.equal(h.status, 200);
+  assert.equal(keys.length, 1); // health never touches the limiter
+});
+
+test("worker: receipt finishes in the background via ctx.waitUntil", async () => {
+  const waited = [];
+  const e = { ...env(), FROM_EMAIL: "Site <website@southtexasconstructionbydesign.com>", SEND_CONFIRMATION: "true" };
+  const r = await worker.fetch(post({ ...lead, message: "Background test message here." }), e, { waitUntil: (p) => waited.push(p) });
+  assert.equal(r.status, 200);
+  assert.equal(waited.length, 1);
+  await waited[0];
+  assert.equal(resend.length, 2);
+});
+
+test("worker: a setting deleted in the dashboard doesn't linger", async () => {
+  await worker.fetch(new Request(SITE + "/api/health"), env());
+  const e = env();
+  delete e.TO_EMAIL;
+  const r = await worker.fetch(new Request(SITE + "/api/health"), e);
+  const j = await r.json();
+  assert.equal(j.email, "NOT ready");
+  assert.deepEqual(j.missingSettings, ["TO_EMAIL"]);
 });

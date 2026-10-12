@@ -11,6 +11,11 @@
     "not_found_handling": "single-page-application",
     "run_worker_first": ["/api/*"]
   },
+  // Contact form: at most 3 sends per minute from one connection, counted
+  // across every copy of the site in a Cloudflare data center.
+  "ratelimits": [
+    { "name": "CONTACT_LIMITER", "namespace_id": "4801", "simple": { "limit": 3, "period": 60 } }
+  ],
   // Keep variables set in the Cloudflare dashboard when deploying from GitHub.
   "keep_vars": true,
   "observability": { "enabled": true }

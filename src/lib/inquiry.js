@@ -1,4 +1,4 @@
-import { PROJECT_TYPES, LIMITS } from "../../shared/projectTypes.js";
+import { PROJECT_TYPES, LIMITS, NAME_NOT_ALLOWED, NAME_ERROR } from "../../shared/projectTypes.js";
 
 export const EMPTY_FORM = {
   firstName: "",
@@ -12,8 +12,8 @@ export const EMPTY_FORM = {
 
 // Same rules the server uses. Server is the real gatekeeper; this is for instant feedback.
 export const RULES = {
-  firstName: (v) => (v.trim().length >= 2 ? "" : "First name is required."),
-  lastName: (v) => (v.trim().length >= 2 ? "" : "Last name is required."),
+  firstName: (v) => (v.trim().length < 2 ? "First name is required." : NAME_NOT_ALLOWED.test(v) ? NAME_ERROR : ""),
+  lastName: (v) => (v.trim().length < 2 ? "Last name is required." : NAME_NOT_ALLOWED.test(v) ? NAME_ERROR : ""),
   email: (v) => (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) ? "" : "Enter a valid email."),
   phone: (v) => (!v.trim() || (/^[\d\s()+.\-]{7,30}$/.test(v.trim()) && v.replace(/\D/g, "").length >= 7) ? "" : "Enter a valid phone number."),
   projectType: (v) => (PROJECT_TYPES.includes(v) ? "" : "Pick a project type."),
@@ -49,7 +49,7 @@ export function buildPayload(form, elapsedMs) {
 }
 
 // Returns { ok } or { ok:false, status, error, fields }. Never throws.
-export async function submitInquiry(payload, { endpoint = "/api/contact", timeoutMs = 15000 } = {}) {
+export async function submitInquiry(payload, { endpoint = "/api/contact", timeoutMs = 25000 } = {}) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   try {

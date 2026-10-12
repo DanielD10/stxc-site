@@ -26,4 +26,4 @@ if (!chats.size) {
 }
 console.log("\nFound:");
 for (const [id, name] of chats) console.log("  TELEGRAM_CHAT_ID=" + id + "   (" + name + ")");
-console.log("\nCopy the line for his account into .env.local and into Vercel.\n");
+console.log("\nCopy the line for his account into .env.local and into Cloudflare (stxc-site → Settings → Variables and Secrets).\n");

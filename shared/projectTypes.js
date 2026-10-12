@@ -26,5 +26,10 @@ export const LIMITS = {
   message: 3000,
 };
 
+// Names can't carry links, email addresses, or markup. Stops spammers from
+// using the "we got your message" email to mail their links to strangers.
+export const NAME_NOT_ALLOWED = /https?:|www\.|@|[<>]|\b[a-z0-9-]+\.(com|net|org|info|biz|io|co|us|ru|xyz|top|site|online|link|app|shop|click|live|me)\b/i;
+export const NAME_ERROR = "Please enter just your name.";
+
 // A human can't fill the form faster than this. Faster = bot.
 export const MIN_FILL_MS = 2500;

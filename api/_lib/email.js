@@ -111,7 +111,8 @@ export function buildConfirmationEmail(d, meta) {
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// Sends through Resend. 8s timeout, one retry on network/5xx/429.
+// Sends through Resend. 6s timeout per try, one retry on network/5xx/429
+// (worst case about 12.5s, well under the form's 25s wait).
 // Idempotency key means a retry can never create a duplicate email.
 export async function sendEmail(cfg, msg, idempotencyKey) {
   if (cfg.dryRun) {
@@ -132,7 +133,7 @@ export async function sendEmail(cfg, msg, idempotencyKey) {
   let lastError;
   for (let attempt = 1; attempt <= 2; attempt++) {
     const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 8000);
+    const timer = setTimeout(() => ctrl.abort(), 6000);
     try {
       const r = await fetch(RESEND_URL, {
         method: "POST",

@@ -5,7 +5,7 @@
  *   requestId → securityHeaders → originGuard → allowMethods → rateLimit
  *   → requireJson → bodyLimit → parseJsonBody → handleContact
  *
- * Env vars (Vercel → Project → Settings → Environment Variables):
+ * Settings (Cloudflare → stxc-site → Settings → Variables and Secrets):
  *   RESEND_API_KEY   required   from resend.com → API Keys
  *   TO_EMAIL         required   inbox that receives inquiries (comma-separate for more than one)
  *   FROM_EMAIL       optional   sender once your domain is verified in Resend
@@ -82,8 +82,9 @@ async function handleContact(req, res) {
   }
 
   // Phone alert goes out even if the email failed, so the lead is never lost.
-  // Customer receipt only after a successful send. Both are awaited (serverless
-  // functions can freeze right after responding) but each has a short timeout.
+  // Customer receipt only after a successful send. On Cloudflare these finish
+  // in the background (req.waitUntil) so the visitor isn't kept waiting;
+  // elsewhere they're awaited, since serverless functions can freeze after responding.
   const extras = [sendPhoneAlerts(data, { id: req.id, emailFailed })];
   if (!emailFailed && cfg.sendConfirmation && !cfg.usingTestSender && !cfg.dryRun) {
     const receipt = buildConfirmationEmail(data, { company, phone: process.env.COMPANY_PHONE || "" });
@@ -92,7 +93,9 @@ async function handleContact(req, res) {
         .catch((err) => log("warn", { id: req.id, event: "receipt_failed", msg: err.message }))
     );
   }
-  await Promise.allSettled(extras);
+  const background = Promise.allSettled(extras);
+  if (typeof req.waitUntil === "function") req.waitUntil(background);
+  else await background;
 
   if (emailFailed) {
     return res.status(502).json({

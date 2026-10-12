@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "npm test",
     "build": "vite build",
     "preview": "vite preview",
     "test": "node --test tests/api.test.js tests/worker.test.js",

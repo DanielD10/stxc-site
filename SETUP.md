@@ -18,8 +18,9 @@ stxc-site/
   worker/index.js     ← plugs the backend into Cloudflare
   wrangler.jsonc      ← Cloudflare settings
   public/_headers     ← security headers for every page
-  tests/              ← 52 automatic checks (npm test)
-  vercel.json         ← lets the same code run on Vercel later if you ever move it
+  tests/              ← 61 automatic checks (npm test), run before every deploy
+  vercel.json         ← only for the old Vercel review copy
+  RUNBOOK.md          ← when something breaks
 ```
 
 ---
@@ -44,7 +45,7 @@ Open **http://localhost:5173**. Send a test inquiry — the email prints in the 
 | Command | What it does |
 |---|---|
 | `npm run check` | Flags anything placeholder or missing |
-| `npm test` | Runs all 52 checks |
+| `npm test` | Runs all 61 checks |
 | `npm run test-alert` | Sends a test lead alert to his phone (uses `.env.local`) |
 | `npm run telegram-id` | Finds his Telegram chat ID |
 | `npm run cf:dev` | Runs the site inside Cloudflare's real runtime locally |
@@ -152,22 +153,16 @@ Cloudflare rebuilds and the live site updates in about a minute (Worker → **De
 
 ## When something's off
 
-| What you see | What to do |
-|---|---|
-| Cloudflare build failed | Open the failed deployment's log. Usually the **Build command** isn't `npm run build`, or the Worker name isn't `stxc-site`. |
-| `/api/health` says `NOT ready` | Add the setting it names under **Variables and Secrets** (not Build variables), then redeploy. |
-| Form says "That didn't go through" | Check `/api/health`, then Worker → **Observability / Logs** for `send_failed`. Usually the domain isn't verified in Resend yet, or the key is wrong. |
-| No email in Yahoo | Check **Spam**. Confirm the domain shows **Verified** in Resend. |
-| No phone alert | `/api/health` → `phoneAlerts`. If `off`, the secrets aren't set. Run `npm run test-alert` locally. |
-| "Too many messages" | Rate limit: 5 per 10 minutes per connection. Wait 10 minutes. |
-| Site looks old after pushing | Wait a minute, then hard-refresh (`Cmd+Shift+R` / `Ctrl+F5`). |
+See **`RUNBOOK.md`**: where to look, what each log message means, and how to roll back a bad deploy.
 
 ---
 
 ## What's protecting the site
 
-**Every form submission passes through, in order:** request ID → security headers → origin check (only the site itself can post) → POST-only → rate limit (5 per 10 min, keyed on Cloudflare's real visitor IP) → JSON-only, 16 KB max → safe parsing → bot traps (hidden field + too-fast timer) → validation (same rules on site and server) → HTML-escaped email (no code or extra recipients can be injected) → timed, retried, duplicate-proof sending → phone alert.
+**Every form submission passes through, in order:** request ID → security headers → origin check (only the site itself can post) → POST-only → rate limit (3 per minute through Cloudflare's rate limiter, plus 5 per 10 minutes, keyed on the real visitor IP) → JSON-only, 16 KB max → safe parsing → bot traps (hidden field + too-fast timer) → validation (same rules on site and server; names can't contain links or email addresses) → HTML-escaped email (no code or extra recipients can be injected) → timed, retried, duplicate-proof sending → receipt and phone alert finish in the background.
+
+**Every deploy:** `npm run build` runs all the tests first. If one fails, Cloudflare stops and the current site stays live.
 
 **Whole site:** strict Content Security Policy (only the site's own scripts, images, and Google Fonts load), HTTPS-only (HSTS), no framing, locked-down browser permissions, photo metadata stripped.
 
-**Costs:** domain ~$10.46/yr. Everything else is on free plans: Cloudflare (100k API requests/day, unlimited page views), Resend (3,000 emails/month), Telegram/ntfy, GitHub.
+**Costs:** domain ~$10.46/yr. Everything else is on free plans: Cloudflare (100k API requests/day, unlimited page views), Resend (100 emails/day, 3,000/month; each inquiry uses 2 with the receipt), Telegram/ntfy, GitHub.

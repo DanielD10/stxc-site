@@ -266,9 +266,68 @@ test("HTML/script in message is escaped, never rendered", async () => {
 
 test("line breaks in name can't inject email headers", async () => {
   const r = res();
-  await contact(req({ body: goodBody({ firstName: "John\r\nBcc: victim@x.com" }) }), r);
+  await contact(req({ body: goodBody({ firstName: "John\r\nBcc: Smith" }) }), r);
   assert.equal(r.statusCode, 200);
   assert.ok(!/[\r\n]/.test(calls[0].body.subject));
+  // and an address smuggled into a name is refused outright
+  const r2 = res();
+  await contact(req({ body: goodBody({ firstName: "John\r\nBcc: victim@x.com", message: "Another message about our project." }) }), r2);
+  assert.equal(r2.statusCode, 422);
+});
+
+test("names can't carry links or email addresses (receipt-spam guard)", async () => {
+  for (const bad of ["Visit evil.com", "http://spam.example", "www.spam.example", "me@spam.example", "<b>Hi</b>"]) {
+    const r = res();
+    await contact(req({ body: goodBody({ firstName: bad, message: "Message for " + bad + " here." }) }), r);
+    assert.equal(r.statusCode, 422, bad);
+    assert.ok(r.body.fields.firstName);
+  }
+  assert.equal(calls.length, 0);
+  // real names with dots, hyphens, apostrophes still work
+  for (const good of ["J.R.", "Mary-Kate", "O'Neil", "St. John"]) {
+    _resetDuplicates();
+    const r = res();
+    await contact(req({ body: goodBody({ firstName: good, message: "Real person " + good + " message." }) }), r);
+    assert.equal(r.statusCode, 200, good);
+  }
+});
+
+test("the form and the server agree on names", () => {
+  const form = { ...EMPTY_FORM, firstName: "Visit evil.com", lastName: "Smith", email: "a@b.co", projectType: PROJECT_TYPES[0], message: "Long enough message here." };
+  assert.ok(validateForm(form).firstName);
+  assert.ok(!validateForm({ ...form, firstName: "J.R." }).firstName);
+});
+
+test("background work uses waitUntil when the platform offers it", async () => {
+  process.env.SEND_CONFIRMATION = "true";
+  process.env.FROM_EMAIL = "South Texas Construction By Design <website@southtexasconstructionbydesign.com>";
+  mockResend([{ status: 200, json: { id: "a" } }, { status: 200, json: { id: "b" } }]);
+  const waited = [];
+  const q = req({ body: goodBody() });
+  q.waitUntil = (p) => waited.push(p);
+  const r = res();
+  await contact(q, r);
+  assert.equal(r.statusCode, 200);
+  assert.equal(waited.length, 1);
+  await waited[0];
+  assert.equal(calls.length, 2); // inquiry + receipt both sent
+});
+
+test("edge rate limiter can block before anything is sent", async () => {
+  const q = req({ body: goodBody() });
+  q.edgeLimit = async () => false;
+  const r = res();
+  await contact(q, r);
+  assert.equal(r.statusCode, 429);
+  assert.equal(calls.length, 0);
+});
+
+test("edge rate limiter errors never block real customers", async () => {
+  const q = req({ body: goodBody() });
+  q.edgeLimit = async () => { throw new Error("limiter down"); };
+  const r = res();
+  await contact(q, r);
+  assert.equal(r.statusCode, 200);
 });
 
 test("multiple TO_EMAIL addresses all receive it", async () => {

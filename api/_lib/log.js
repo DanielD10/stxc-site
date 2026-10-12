@@ -1,4 +1,4 @@
-// Structured logs show up in Vercel → Project → Logs.
+// Structured logs show up in Cloudflare → stxc-site → Observability → Logs.
 // Never log full emails, phone numbers or messages.
 
 export function log(level, fields) {

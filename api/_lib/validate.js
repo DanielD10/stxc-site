@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { PROJECT_TYPES, LIMITS, MIN_FILL_MS } from "../../shared/projectTypes.js";
+import { PROJECT_TYPES, LIMITS, MIN_FILL_MS, NAME_NOT_ALLOWED, NAME_ERROR } from "../../shared/projectTypes.js";
 
 // Control characters, zero-width characters, and line/paragraph separators.
 const INVISIBLE_CHARS = new RegExp("[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F\\u007F\\u200B-\\u200F\\u2028\\u2029]", "g");
@@ -31,7 +31,9 @@ export function validateContact(body) {
 
   const fields = {};
   if (data.firstName.length < 2) fields.firstName = "First name is required.";
+  else if (NAME_NOT_ALLOWED.test(data.firstName)) fields.firstName = NAME_ERROR;
   if (data.lastName.length < 2) fields.lastName = "Last name is required.";
+  else if (NAME_NOT_ALLOWED.test(data.lastName)) fields.lastName = NAME_ERROR;
   if (!EMAIL_RE.test(data.email)) fields.email = "Enter a valid email.";
   if (data.phone && (!PHONE_RE.test(data.phone) || data.phone.replace(/\D/g, "").length < 7)) {
     fields.phone = "Enter a valid phone number.";

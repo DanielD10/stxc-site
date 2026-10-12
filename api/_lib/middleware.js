@@ -1,7 +1,7 @@
 import { randomUUID, createHash } from "node:crypto";
 import { log } from "./log.js";
 
-/* ── 1. Request ID: every request gets an ID you can search in Vercel logs ── */
+/* ── 1. Request ID: every request gets an ID you can search in Cloudflare logs ── */
 export async function requestId(req, res, next) {
   req.id = randomUUID();
   res.setHeader("X-Request-Id", req.id);
@@ -88,7 +88,7 @@ export function bodyLimit(maxBytes) {
 }
 
 /* ── 7. Safe JSON parsing ──
-   Vercel parses JSON for us; bad JSON throws when req.body is read. */
+   The platform adapter parses JSON; bad JSON throws when req.body is read. */
 export function parseJsonBody(maxBytes) {
   return async function (req, res, next) {
     let body;
@@ -171,6 +171,26 @@ export function rateLimit({ windowMs, max, name }) {
   return async function (req, res, next) {
     const ipHash = createHash("sha256").update(clientIp(req)).digest("hex").slice(0, 32);
     const key = "rl:" + name + ":" + ipHash;
+
+    // Cloudflare's rate limiter (shared by every copy of the site in a data
+    // center). If it's missing or errors, the in-memory limit below still runs.
+    if (typeof req.edgeLimit === "function") {
+      let allowed = true;
+      try {
+        allowed = (await req.edgeLimit(key)) !== false;
+      } catch {
+        allowed = true;
+      }
+      if (!allowed) {
+        res.setHeader("Retry-After", "60");
+        log("warn", { id: req.id, event: "rate_limited", by: "edge", ip: ipHash.slice(0, 8) });
+        return res.status(429).json({
+          ok: false,
+          error: "Too many messages from this connection. Please wait a few minutes or call us.",
+        });
+      }
+    }
+
     const hit = (await redisCount(key, windowMs)) || memoryCount(key, windowMs);
     res.setHeader("X-RateLimit-Limit", String(max));
     res.setHeader("X-RateLimit-Remaining", String(Math.max(0, max - hit.count)));

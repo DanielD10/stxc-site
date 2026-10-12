@@ -1,5 +1,5 @@
 // DEV ONLY. Makes `npm run dev` serve /api/* using the exact same files
-// Vercel runs in production, so the contact form works on your computer.
+// Cloudflare runs in production, so the contact form works on your computer.
 // No Resend key in .env.local? It runs in DRY RUN mode: the email prints
 // in your terminal instead of being sent.
 import fs from "node:fs";
@@ -54,7 +54,7 @@ export function localApi(env) {
             get() {
               if (!raw) return undefined;
               if (!isJson) return raw;
-              return JSON.parse(raw); // throws on bad JSON, same as Vercel
+              return JSON.parse(raw); // throws on bad JSON, same as production
             },
           });
           const mod = await server.ssrLoadModule(file);
