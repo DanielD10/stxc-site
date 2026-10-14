@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "prebuild": "npm test",
-    "build": "vite build",
+    "build": "vite build && vite build --ssr src/entry-server.jsx --outDir .ssr --emptyOutDir && node scripts/prerender.js",
     "preview": "vite preview",
     "test": "node --test tests/api.test.js tests/worker.test.js",
     "check": "node scripts/prelaunch-check.js",

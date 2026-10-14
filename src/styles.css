@@ -18,6 +18,9 @@ a:focus-visible, button:focus-visible { outline: 2px solid #60A5FA; outline-offs
 @keyframes dn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
 @keyframes toast { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes spin { to { transform: rotate(360deg); } }
+/* Hero fade-in. CSS only, so the words are in the page from the first byte. */
+@keyframes hin { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+.hin { animation: hin .8s ease both; }
 
 .call-bar { display: none; }
 @media (max-width: 1300px) { .desk { display: none !important; } .mob { display: flex !important; } }

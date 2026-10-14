@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
 import { SITE, CREDENTIALS, FOCUS, PHOTOS, GALLERY, SERVICES, ROOF_SERVICES, MANAGEMENT, ABOUT, FAQS } from "./config.js";
 import { PROJECT_TYPES } from "../shared/projectTypes.js";
 import { EMPTY_FORM, RULES, validateForm, limitField, buildPayload, submitInquiry } from "./lib/inquiry.js";
@@ -17,14 +17,22 @@ const telHref = "tel:" + SITE.phone.replace(/[^\d+]/g, "");
 const mailHref = "mailto:" + SITE.email;
 
 /* ── Hooks ── */
+// Runs before the browser paints; falls back to useEffect when prerendering.
+const useBeforePaint = typeof window === "undefined" ? useEffect : useLayoutEffect;
+
+// Content starts visible (so the prerendered page Google reads has every word
+// showing). Below-the-fold blocks are hidden before the first paint and fade in
+// on scroll, so nobody sees a flash.
 function useReveal() {
   const ref = useRef(null);
-  const [vis, setVis] = useState(false);
-  useEffect(() => {
+  const [vis, setVis] = useState(true);
+  useBeforePaint(() => {
     const el = ref.current;
     if (!el) return;
     const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce || typeof IntersectionObserver === "undefined") { setVis(true); return; }
+    if (reduce || typeof IntersectionObserver === "undefined") return;
+    if (el.getBoundingClientRect().top < window.innerHeight) return; // already on screen
+    setVis(false);
     const ob = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVis(true); ob.disconnect(); } }, { threshold: 0.06, rootMargin: "0px 0px -16px 0px" });
     ob.observe(el);
     return () => ob.disconnect();
@@ -166,9 +174,7 @@ function ML({ label, onClick }) {
 
 /* ── Hero ── */
 function Hero() {
-  const [on, setOn] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setOn(true), 80); return () => clearTimeout(t); }, []);
-  const tr = (d) => `opacity .8s ${d}s ease,transform .8s ${d}s ease`;
+  const anim = (d) => ({ animationDelay: d + "s" });
   return <section id="hero" style={{ minHeight: "100vh", display: "flex", alignItems: "center", position: "relative", overflow: "hidden", background: BG, paddingTop: "5rem" }}>
     <div aria-hidden="true" style={{ position: "absolute", inset: 0 }}>
       <img src={photo(PHOTOS.hero)} alt="" fetchpriority="high" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.38 }} onError={(e) => { e.currentTarget.style.display = "none"; }} />
@@ -180,25 +186,25 @@ function Hero() {
     </div>
     <div className="wrap hero-g" style={{ position: "relative", zIndex: 1, padding: "3rem 0 5rem" }}>
       <div>
-      <div style={{ opacity: on ? 1 : 0, transform: on ? "none" : "translateY(12px)", transition: tr(0.05), marginBottom: "2rem" }}>
+      <div className="hin" style={{ ...anim(0.05), marginBottom: "2rem" }}>
         <span style={{ display: "inline-flex", alignItems: "center", gap: ".5rem", background: BLUELO, border: "1px solid rgba(59,130,246,.22)", borderRadius: 100, padding: ".35rem .9rem .35rem .5rem" }}>
           <span style={{ background: BLUE, borderRadius: "50%", width: 6, height: 6, display: "inline-block" }} />
           <span style={{ fontSize: ".74rem", fontWeight: 600, letterSpacing: ".12em", textTransform: "uppercase", color: BLUEHI }}>Texas Statewide — Established {SITE.founded}</span>
         </span>
       </div>
-      <h1 className="hero-h1" style={{ fontWeight: 900, lineHeight: 0.94, letterSpacing: "-.04em", marginBottom: "2rem", opacity: on ? 1 : 0, transform: on ? "none" : "translateY(20px)", transition: tr(0.12) }}>
+      <h1 className="hero-h1 hin" style={{ ...anim(0.12), fontWeight: 900, lineHeight: 0.94, letterSpacing: "-.04em", marginBottom: "2rem" }}>
         <span style={{ display: "block", color: WHITE }}>Built for Healthcare.</span>
         <span style={{ display: "block", background: "linear-gradient(110deg,#3B82F6 0%,#60A5FA 45%,#F59E0B 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Trusted Across Texas.</span>
       </h1>
-      <p style={{ fontSize: "clamp(1.05rem,1.6vw,1.25rem)", color: MID, maxWidth: "56ch", lineHeight: 1.75, marginBottom: "2.75rem", opacity: on ? 1 : 0, transition: tr(0.22) }}>
+      <p className="hin" style={{ ...anim(0.22), fontSize: "clamp(1.05rem,1.6vw,1.25rem)", color: MID, maxWidth: "56ch", lineHeight: 1.75, marginBottom: "2.75rem" }}>
         The Contractor that nursing homes, assisted living facilities, and commercial properties rely on: phased renovations in occupied buildings, full project management, and our own roofing crews, anywhere in Texas.
       </p>
-      <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap", opacity: on ? 1 : 0, transition: tr(0.3) }}>
+      <div className="hin" style={{ ...anim(0.3), display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
         <Btn onClick={() => go("contact")} sx={{ padding: ".95rem 2.25rem", fontSize: "1.05rem", fontWeight: 700 }}>Request an Estimate</Btn>
         <Btn href={telHref} v="out" sx={{ padding: ".95rem 1.75rem", fontSize: "1.05rem" }}>Call {SITE.phone}</Btn>
       </div>
       </div>
-      <div className="hero-side" style={{ opacity: on ? 1 : 0, transform: on ? "none" : "translateY(20px)", transition: tr(0.35) }}>
+      <div className="hero-side hin" style={anim(0.35)}>
         <figure className="hero-photo" style={{ margin: 0, position: "relative", borderRadius: 18, overflow: "hidden", border: `1px solid ${BORDER}`, background: RAISED, boxShadow: "0 30px 80px rgba(0,0,0,.55)" }}>
           <img src={photo(PHOTOS.heroSide)} alt="Our crew replacing a window in an occupied room, furniture wrapped and protected" loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={hideBrokenImg} />
           <figcaption style={{ position: "absolute", left: "1rem", bottom: "1rem", background: "rgba(8,12,20,.85)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,.1)", borderRadius: 8, padding: ".45rem .8rem", fontSize: ".85rem", color: MID }}>Window replacement in an occupied room</figcaption>
@@ -607,7 +613,7 @@ function Contact({ addToast }) {
             </div>
           </div>}
 
-          {(status === "idle" || status === "sending") && <form onSubmit={submit} noValidate aria-label="Project inquiry form">
+          {(status === "idle" || status === "sending") && <form onSubmit={submit} method="post" noValidate aria-label="Project inquiry form">
             <h3 style={{ fontWeight: 700, fontSize: "1.15rem", color: WHITE, marginBottom: "1.5rem" }}>Request an Estimate</h3>
             <div className="hp" aria-hidden="true">
               <label htmlFor="fi-website">Leave this field empty</label>

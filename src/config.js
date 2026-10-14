@@ -5,6 +5,7 @@
 
 export const SITE = {
   company: "South Texas Construction By Design",
+  url: "https://southtexasconstructionbydesign.com", // the live address (used for Google and link previews)
   tagline: "Building Dreams. Creating Reality.",
   phone: "(210) 367-6648",
   email: "jrduran75@yahoo.com",      // shown on the site; form inquiries go to TO_EMAIL in Vercel

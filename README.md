@@ -30,7 +30,8 @@ If the email fails, the visitor gets a screen with his phone number and a pre-fi
 | Project-type dropdown, field limits, name rules (site and server both use these) | `shared/projectTypes.js` |
 | Job photos | `public/photos/` (`name.webp` ~1600px + `name-sm.webp` ~720px) |
 | Page layout and sections | `src/App.jsx`, `src/styles.css` |
-| Google title/description | `index.html` |
+| Google title/description, link-preview image | `index.html` |
+| Business details Google reads (structured data) | `src/entry-server.jsx` (built from `src/config.js`) |
 | Security headers, caching | `public/_headers` |
 | Cloudflare setup, rate limit | `wrangler.jsonc` |
 | The form's backend | `api/contact.js` → helpers in `api/_lib/` |
@@ -44,7 +45,7 @@ If the email fails, the visitor gets a screen with his phone number and a pre-fi
 | `npm install` | Install (once, and after pulling new code) |
 | `npm run dev` | Run locally at http://localhost:5173. The form works in dry-run mode (emails print in the terminal). |
 | `npm test` | Run all 61 tests: form rules, security, email, retries, rate limits, the Cloudflare Worker |
-| `npm run build` | Runs the tests first, then builds. **A failing test stops the build**, so Cloudflare never deploys broken code. |
+| `npm run build` | Runs the tests first, then builds, then prerenders the page into plain HTML with Google business data (`scripts/prerender.js`, `src/entry-server.jsx`). **A failing test stops the build**, so Cloudflare never deploys broken code. |
 | `npm run cf:dev` | Run inside Cloudflare's real runtime locally (put test settings in `.dev.vars`) |
 | `npm run check` | List anything still placeholder |
 | `npm run test-alert` | Send a test phone alert (uses `.env.local`) |
