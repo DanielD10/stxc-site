@@ -25,9 +25,14 @@ export function structuredData() {
     foundingDate: String(SITE.founded),
     slogan: SITE.tagline,
     description:
-      "Healthcare and commercial remodeling Contractor serving all of Texas: phased renovations in occupied nursing homes and assisted living facilities, commercial build-outs, new commercial construction, project management, and an in-house roofing division.",
+      "San Antonio-based healthcare and commercial remodeling Contractor serving all of Texas: phased renovations in occupied nursing homes and assisted living facilities, commercial build-outs, new commercial construction, project management, and an in-house roofing division.",
     image: url + "photos/" + PHOTOS.hero + ".webp",
-    areaServed: { "@type": "State", name: "Texas" },
+    // Service-area business: city only, no street address (there's no office to visit).
+    address: { "@type": "PostalAddress", addressLocality: SITE.city, addressRegion: "TX", addressCountry: "US" },
+    areaServed: [
+      { "@type": "City", name: SITE.city + ", Texas" },
+      { "@type": "State", name: "Texas" },
+    ],
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: "Construction services",

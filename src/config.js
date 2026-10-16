@@ -10,7 +10,8 @@ export const SITE = {
   phone: "(210) 367-6648",
   email: "jrduran75@yahoo.com",      // shown on the site; form inquiries go to TO_EMAIL in Vercel
   founded: 2005,                     // ← CONFIRM: year founded (drives "Established" and "Years in Texas")
-  serviceArea: "All of Texas · Based in South Texas",
+  serviceArea: "All of Texas · Based in San Antonio",
+  city: "San Antonio", // home base. No office for visitors, so no street address anywhere.
   responseNote: "We reply within one business day",
 };
 
@@ -96,7 +97,7 @@ export const FAQS = [
   { q: "Can you work around our state survey?", a: "Yes. Tell us your survey window and we'll schedule the work around it." },
   { q: "Can you manage a project without doing the construction?", a: "Yes. We can manage the whole job — schedule, budget, permits, and every trade — whether our crews build it or yours do." },
   { q: "Do you handle permits and inspections?", a: "Yes. We pull the permits, coordinate with the local inspectors, and manage everything through closeout." },
-  { q: "Do you serve all of Texas or just South Texas?", a: "All of Texas. Our crews travel to the project." },
+  { q: "Do you serve all of Texas or just San Antonio?", a: "All of Texas. We're based in San Antonio, and our crews travel to the project." },
   { q: "How fast can you respond to storm damage?", a: "Call us. We get the roof covered, document damage for your insurance claim, and handle the repair." },
   { q: "What happens after I send the form?", a: "We call or email you within one business day to talk through the project and set up a site visit for an estimate." },
 ];
